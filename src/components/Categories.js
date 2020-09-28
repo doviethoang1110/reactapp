@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import "antd/dist/antd.css";
-import { TreeSelect } from "antd";
 import { connect } from "react-redux";
 import callApi from "../utils/api";
 import "./Categories.css";
+import CategoryForm from "./CategoryForm";
+
 
 const mapStateToProps = (state) => {
     return {
@@ -50,6 +51,7 @@ class Categories extends Component {
         return results;
     };
     render() {
+        
         // let { products } = this.state;
         return (
             <div className="row">
@@ -88,37 +90,7 @@ class Categories extends Component {
                         <div className="card-header">
                             <h3 className="card-title">Quick Example</h3>
                         </div>
-                        <form>
-                            <div className="card-body">
-                                <div className="form-group">
-                                    <label htmlFor="exampleInputEmail1">Email address</label>
-                                    <input type="email" className="form-control" id="exampleInputEmail1" placeholder="Enter email" />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="exampleInputFile">Danh mục cha</label>
-                                    <TreeSelect
-                                        style={{ width: "100%" }}
-                                        value={this.state.undefined}
-                                        dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                                        treeData={this.state.categories}
-                                        placeholder="Please select"
-                                        onChange={this.onChange}
-                                    />
-                                </div>
-                                <div className="form-check">
-                                    <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                    <label className="form-check-label" htmlFor="exampleCheck1">
-                                        Check me out
-                                    </label>
-                                </div>
-                            </div>
-                            {/* /.card-body */}
-                            <div className="card-footer">
-                                <button type="submit" className="btn btn-primary">
-                                    Submit
-                                </button>
-                            </div>
-                        </form>
+                        <CategoryForm treeData={this.state.categories}/>
                     </div>
                 </div>
             </div>
@@ -133,7 +105,7 @@ class TreeComponent extends Component {
             return this.props.items.map((item, index) => (
                 <li key={index}><span><i className={item.children.length === 0 ? 'fa fa-minus' : 'fa fa-chevron-right'}></i> {item.title}</span>
                     <div className={item.children.length === 0 ? 'button button1' : 'button'}>
-                        <div><button type="button" className="btn btn-warning"><i className="fa fa-pen"></i></button></div>
+                        <div><button style={{marginRight:'5px'}} type="button" className="btn btn-warning"><i className="fa fa-pen"></i></button></div>
                         <div><button type="button" className="btn btn-danger"><i className="fa fa-trash"></i></button></div>
                     </div>
                     {item.children.length > 0 ? (<ul id={item.title} className="myclass">
