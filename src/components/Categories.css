@@ -1,8 +1,8 @@
-*{
+/* *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
+} */
 .box{
     height: 400px;
     margin-top: 30px;
@@ -23,9 +23,6 @@ i.fas.fa-angle-right {
     position:relative;
     top:-30px;
     left:170px;
-}
-.myclass{
-    margin-left:50px;
 }
 .button1{
     position: relative;

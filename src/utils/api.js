@@ -6,7 +6,5 @@ export default function callApi(url, method = 'GET', data = null){
         url: `${API_URL}/${url}`,
         method: method,
         data: data
-    }).catch((error) => {
-        console.log(error);
-    })
+    });
 }

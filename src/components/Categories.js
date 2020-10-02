@@ -1,30 +1,21 @@
 import React, { Component } from "react";
 import "antd/dist/antd.css";
 import { connect } from "react-redux";
-import callApi from "../utils/api";
 import "./Categories.css";
 import CategoryForm from "./CategoryForm";
+import { actionGetCategories } from '../actions/category';
 
-
-const mapStateToProps = (state) => {
-    return {
-        products: state.products,
-    };
-};
+// Parent Component
 class Categories extends Component {
     constructor(props) {
         super(props);
         this.state = {
             categories: [],
-            value:undefined
+            value: undefined
         };
     }
     componentDidMount() {
-        callApi("categories").then((response) => {
-            this.setState({
-                categories: response.data,
-            });
-        });
+        this.props.getAllCategories();
     }
     onChange = (value) => {
         console.log(value);
@@ -51,8 +42,7 @@ class Categories extends Component {
         return results;
     };
     render() {
-        
-        // let { products } = this.state;
+        let { categories } = this.props;
         return (
             <div className="row">
                 <div className="col-md-12">
@@ -78,7 +68,7 @@ class Categories extends Component {
                         <div className="row">
                             <div className="col-md-12 col-md-offset-1">
                                 <ul className="list-menu">
-                                    <TreeComponent items={this.state.categories} />
+                                    <TreeComponent items={categories} />
                                 </ul>
                             </div>
                         </div>
@@ -90,7 +80,7 @@ class Categories extends Component {
                         <div className="card-header">
                             <h3 className="card-title">Quick Example</h3>
                         </div>
-                        <CategoryForm treeData={this.state.categories}/>
+                        <CategoryForm treeData={categories} />
                     </div>
                 </div>
             </div>
@@ -98,17 +88,34 @@ class Categories extends Component {
     }
 }
 class TreeComponent extends Component {
+
+    toggle = (id, e) => {
+        e.stopPropagation();
+        let ele = document.getElementById(id);
+        let style = e.target;
+        if (ele) {
+            if (ele.style.display === 'none') {
+                style.className = 'fa fa-chevron-down'
+                ele.style.display = 'block';
+            } else {
+                style.className = 'fa fa-chevron-right'
+                ele.style.display = 'none';
+            }
+        } else {
+            return false;
+        }
+    }
     render() {
         if (!this.props.items || !this.props.items.length) {
             return null;
         } else {
             return this.props.items.map((item, index) => (
-                <li key={index}><span><i className={item.children.length === 0 ? 'fa fa-minus' : 'fa fa-chevron-right'}></i> {item.title}</span>
+                <li key={index}><i style={{ cursor: 'pointer' }} onClick={(e) => this.toggle(item.value, e)} className={item.children.length === 0 ? 'fa fa-minus' : 'fa fa-chevron-right'}></i> {item.title}
                     <div className={item.children.length === 0 ? 'button button1' : 'button'}>
-                        <div><button style={{marginRight:'5px'}} type="button" className="btn btn-warning"><i className="fa fa-pen"></i></button></div>
+                        <div><button style={{ marginRight: '5px' }} type="button" className="btn btn-warning"><i className="fa fa-pen"></i></button></div>
                         <div><button type="button" className="btn btn-danger"><i className="fa fa-trash"></i></button></div>
                     </div>
-                    {item.children.length > 0 ? (<ul id={item.title} className="myclass">
+                    {item.children.length > 0 ? (<ul id={item.value} style={{ display: 'none', marginLeft: '50px' }}>
                         <TreeComponent items={item.children}></TreeComponent>
                     </ul>) : ''}
                 </li>
@@ -117,4 +124,18 @@ class TreeComponent extends Component {
     }
 }
 
-export default connect(mapStateToProps, null)(Categories);
+// Redux Map
+const mapStateToProps = (state) => {
+    return {
+        categories: state.categories,
+    };
+};
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        getAllCategories: () => {
+            dispatch(actionGetCategories());
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Categories);
