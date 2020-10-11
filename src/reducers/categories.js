@@ -1,4 +1,4 @@
-import { ADD_CATEGORY_SUCCESS, GET_CATEGORIES } from '../constants/ActionTypes';
+import { ADD_CATEGORY_SUCCESS, GET_CATEGORIES, UPDATE_CATEGORY_SUCCESS } from '../constants/ActionTypes';
 let initialState = [];
 
 export const categories = (state = initialState, action) => {
@@ -7,8 +7,9 @@ export const categories = (state = initialState, action) => {
             state = action.categories;
             return [...state];
         case ADD_CATEGORY_SUCCESS:
-            state = action.categories;
-            state.push(action.category)
+            return [...state];
+        case UPDATE_CATEGORY_SUCCESS:
+            // state.push(action.category)
             return [...state];
         default:
             return [...state];

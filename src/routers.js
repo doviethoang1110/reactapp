@@ -1,5 +1,5 @@
 import Dashboard from "./components/Dashboard";
-import Categories from "./components/Categories";
+import Categories from "./containers/Categories";
 import NotFound from "./components/404";
 
 const routes = [

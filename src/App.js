@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 import Header from "./components/Header";
 import {Switch, Route} from "react-router-dom";
 import routes from "./routers";
+import './App.css';
 import Aside from "./components/Aside";
+import { connect } from "react-redux";
 
 
 class App extends Component{
@@ -20,8 +22,11 @@ class App extends Component{
     }
 
     render() {
+        const { isLoading } = this.props;
+        let loading = isLoading ?  <div className="loading" style={{display:"block"}}></div> : '';
         return (
             <div className="App">
+                {loading}
                 <Header/>
                 <Aside/>
                 <div className="content-wrapper">
@@ -53,5 +58,9 @@ class App extends Component{
     }
 }
 
-
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        isLoading: state.loading,
+    };
+};
+export default connect(mapStateToProps, null)(App);
