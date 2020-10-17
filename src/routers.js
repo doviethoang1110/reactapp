@@ -1,6 +1,7 @@
 import Dashboard from "./components/Dashboard";
 import Categories from "./containers/Categories";
 import NotFound from "./components/404";
+import Brands from "./containers/Brands";
 
 const routes = [
     {
@@ -14,10 +15,16 @@ const routes = [
         component: Categories
     },
     {
+        path: '/brands',
+        exact: false,
+        component: Brands
+    },
+    {
         path: '',
         exact: false,
         component: NotFound
-    }
+    },
+
 ];
 
 export default routes;

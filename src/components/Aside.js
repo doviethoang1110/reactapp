@@ -12,6 +12,11 @@ const menus = [
         icon: 'fas fa-th',
         label: 'Quản lý danh mục',
     },
+    {
+        path:'/brands',
+        icon: 'fa fa-file-image',
+        label: 'Quản lý brand',
+    },
 ];
 
 class Aside extends Component {

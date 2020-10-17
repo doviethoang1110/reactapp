@@ -1,17 +1,19 @@
-import React, { Component } from 'react';
-import Validator from '../../utils/Validator';
-import { toast } from '../../utils/alert';
+import React,{Component} from "react";
+import Validator from "../../utils/Validator";
+import store from "../../store";
 import {actionToggleLoading} from "../../actions/loading";
-import store from '../../store';
+import {toast} from "../../utils/alert";
 
-class CategoryForm extends Component {
+class BrandForm extends Component{
     constructor(props) {
         super(props);
         this.state = {
             name: '',
-            parentId: 0,
+            image: null,
             status: false,
             errors: {},
+            url:null,
+            image_name:''
         }
         const rules = [
             {
@@ -37,40 +39,48 @@ class CategoryForm extends Component {
         ];
         this.validator = new Validator(rules);
     }
+
     componentDidMount() {
-        if (this.props.category) {
+        if (this.props.brand) {
             this.setState({
-                name: this.props.category.name,
-                parentId: this.props.category.parentId,
-                status: this.props.category.status,
-                errors: {}
+                ...this.state,
+                name: this.props.brand.name,
+                image: this.props.brand.image,
+                status: this.props.brand.status,
             })
         }
     }
     componentWillReceiveProps(props) {
         this.setState({
-            name: props.category.name,
-            parentId: props.category.parentId,
-            status: props.category.status,
-            errors:{}
+            ...this.state,
+            name: props.brand.name,
+            image: props.brand.image,
+            status: props.brand.status,
         })
     }
     handleSubmit = async (e) => {
         e.preventDefault();
-        let {name,parentId,status} = this.state;
+        let {name,image,status} = this.state;
+        if(!image) {
+            document.getElementById('err_image').innerText = 'Ảnh không được rỗng';
+            return;
+        }
         let validateError = this.validator.validate(this.state);
         if(Object.keys(validateError).length) {
             this.setState({
                 errors: this.validator.validate(this.state),
             });
         }else {
-            store.dispatch(actionToggleLoading(true))
+            let em = {name,image,status};
+            let data = new FormData();
+            for (let d of Object.keys(em)) {
+                data.append(d,em[d]);
+            }
+            store.dispatch(actionToggleLoading(true));
             setTimeout(() => {
-                this.props.submitHandle(this.props.category._id,{name,parentId,status})
+                this.props.submitHandle(data)
                     .then(response => {
-                        if(this.props.category._id){
-                            this.props.eventEdit(response.id);
-                        }
+                        this.refreshForm();
                         store.dispatch(actionToggleLoading(false))
                         toast('success',response.message)
                     })
@@ -84,26 +94,41 @@ class CategoryForm extends Component {
             },1000);
         }
     }
-
+    refreshForm = () => {
+        this.setState({
+            image: null,
+            status: false,
+            url:null,
+            image_name:''
+        })
+    }
     handleChange = (e) => {
+        if(e.target.type === 'file') {
+            let file = e.target.files[[0]];
+            this.setState({
+                ...this.state,
+                image_name:file.name,
+                image: file,
+                url:URL.createObjectURL(file)
+            })
+        }
         this.setState({
             [e.target.name] : e.target.type === 'checkbox' ? e.target.checked : e.target.value
         });
     }
+
     render() {
-        let { category, closeForm } = this.props;
-        let { name, parentId, status, errors } = this.state;
-        let { _id } = category;
+        let {name,image,status,errors,url,image_name} = this.state;
         return (
-            <div className={_id ? 'card card-warning' : 'card card-primary'}>
+            <div className='card card-primary'>
                 <div className="card-header">
-                    <h3 className="card-title">{_id ? 'Cập nhật' : 'Thêm mới'} danh mục</h3>
-                    <span onClick={closeForm} style={{ float: 'right', cursor: 'pointer' }}><i className="fa fa-times"></i></span>
+                    <h3 className="card-title">Thêm mới nhãn hiệu</h3>
+                    <span onClick={this.props.closeForm} style={{ float: 'right', cursor: 'pointer' }}><i className="fa fa-times"></i></span>
                 </div>
                 <form onSubmit={this.handleSubmit}>
                     <div className="card-body">
                         <div className="form-group">
-                            <label htmlFor="name">Tên danh mục</label>
+                            <label htmlFor="name">Tên nhãn hiệu</label>
                             <input
                                 type="text" name="name"
                                 className="form-control"
@@ -115,22 +140,31 @@ class CategoryForm extends Component {
                             <span className="text-danger" id="err_name"></span>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="parentId">Danh mục cha</label>
-                            <select onChange={this.handleChange} value={parentId} className="form-control" id="parentId" name="parentId">
-                                <option value={'0'}>Not selected</option>
-                                <Select treeData={this.props.treeData} space={''} />
-                            </select>
-                            {errors.parentId && <div className="text-danger" style={{display: 'block'}}>{errors.parentId}</div>}
-                            <span className="text-danger" id="err_parentId"></span>
+                            <label htmlFor="parentId">Ảnh</label>
+                            <div className="input-group">
+                                <div className="custom-file">
+                                    <input type="file"
+                                           onChange={this.handleChange}
+                                           className="custom-file-input" id="image"/>
+                                        <label className="custom-file-label" htmlFor="image">{image_name ? image_name : 'Choose file'}</label>
+                                </div>
+                            </div>
+                            { url ? (
+                                <div className='mt-2'>
+                                    <img src={url} width={'200px'}/>
+                                </div>
+                            ) : null}
+                            {errors.image && <div className="text-danger" style={{display: 'block'}}>{errors.image}</div>}
+                            <span className="text-danger" id="err_image"></span>
                         </div>
-                        <div className="form-check">
+                        <div className="icheck-primary">
                             <input
                                 onChange={this.handleChange}
                                 name="status" type="checkbox"
                                 checked={status === true ? 'checked' : ''}
                                 value={status}
                                 className="form-check-input" id="status" />
-                            <label className="form-check-label" htmlFor="status">Hiển thị</label>
+                            <label className="form-check-label" htmlFor="status">Active</label>
                             <span className="text-danger" id="err_status"></span>
                         </div>
                     </div>
@@ -143,17 +177,4 @@ class CategoryForm extends Component {
         )
     }
 }
-const Select = (props) => {
-    if (props.treeData.length) {
-        return props.treeData.map((c, index) => (
-            <React.Fragment key={index}>
-                <option value={c.id}>{props.space}{c.name}</option>
-                { c.children.length > 0 ? (<Select treeData={c.children} space={props.space + '|---'} />) : ''}
-            </React.Fragment>
-        ));
-    } else {
-        return null;
-    }
-}
-
-export default CategoryForm;
+export default BrandForm;

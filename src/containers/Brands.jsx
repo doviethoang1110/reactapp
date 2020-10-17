@@ -1,44 +1,38 @@
 import React, { Component } from 'react';
-import CategoryList from '../components/category/CategoryList';
-import CategoryForm from '../components/category/CategoryForm';
-import "../components/category/Category.css";
-import {
-    actionGetCategories,
-    actionStoreCategory,
-    actionUpdateCategory
-} from '../actions/category';
+import BrandList from "../components/brand/BrandList";
 import { connect } from "react-redux";
+import BrandForm from "../components/brand/BrandForm";
+import {actionGetBrands, actionStoreBrand} from "../actions/brand";
 import {actionToggleLoading} from "../actions/loading";
-import store from "../store";
-import {getCategories} from "../utils/helpers";
+import store from '../store';
 
-class Categories extends Component {
+class Brands extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            category: { name: '', parentId: 0, status: false },
+            brand: { name: '', image: null, status: false },
             isOpened: false
         }
     }
     componentDidMount() {
-        this.props.getAllCategories();
+        this.props.getAllBrands();
     }
-    addCategory = () => {
+    addBrand = () => {
         this.setState({
             isOpened: true,
-            category: { name: '', parentId: 0, status: false }
+            brand: { name: '', image: null, status: false }
         })
     }
-
-    editCategory = (id) => {
-        this.setState({
-            isOpened: true,
-            category: this.props.categories.find(cat => cat._id === id)
-        })
-    }
-
+    //
+    // editCategory = (id) => {
+    //     this.setState({
+    //         isOpened: true,
+    //         category: this.props.categories.find(cat => cat._id === id)
+    //     })
+    // }
+    //
     refresh = () => {
-        this.props.refresh();
+        // this.props.refresh();
     }
 
     closeForm = () => {
@@ -48,13 +42,13 @@ class Categories extends Component {
     }
 
     render() {
-        let categories = getCategories(this.props.categories);
-        let { category } = this.state;
+        let { brand } = this.state;
+        let { brands } = this.props;
         return (
             <div className="row">
                 <div className="col-md-12">
                     <div className="card-header">
-                        <button className="btn btn-success card-title" onClick={this.addCategory}>
+                        <button className="btn btn-success card-title" onClick={this.addBrand}>
                             <i className="fa fa-plus"></i> Add new
                         </button>
                         <button onClick={this.refresh} className="ml-2 btn btn-outline-primary card-title"><i className="fas fa-sync"></i> Refresh</button>
@@ -72,27 +66,18 @@ class Categories extends Component {
                     {/* /.card */}
                 </div>
                 <div className={`card-body table-responsive p-0 ${this.state.isOpened ? 'col-md-7' : 'col-md-12'}`}>
-                    <div className="box">
-                        <div className="row">
-                            <div className="col-md-12 col-md-offset-1">
-                                <ul className="list-menu">
-                                    <CategoryList items={categories} event={this.editCategory} />
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    <BrandList items={brands}/>
                 </div>
                 {/* /.card-body */}
                 {this.state.isOpened ? (
                     <div className='col-md-5 card-body'>
-                        <CategoryForm
-                            treeData={categories}
-                            eventEdit={this.editCategory}
-                            category={category}
+                        <BrandForm
                             closeForm={this.closeForm}
-                            submitHandle={this.props.storeCategory}/>
+                            brand={brand}
+                            submitHandle={this.props.storeBrand}
+                        />
                     </div>
-                ) : ('')}
+                ) : null}
             </div>
         );
     }
@@ -100,7 +85,7 @@ class Categories extends Component {
 // Redux Map
 const mapStateToProps = (state) => {
     return {
-        categories: state.categories,
+        brands: state.brands,
     };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -108,24 +93,24 @@ const mapDispatchToProps = (dispatch) => {
         refresh:() => {
             dispatch(actionToggleLoading(true))
             setTimeout(() => {
-                dispatch(actionGetCategories());
+                dispatch(actionGetBrands());
                 dispatch(actionToggleLoading(false))
             },2000);
         },
-        getAllCategories: () => {
-            if(store.getState().categories.length) {
+        getAllBrands: () => {
+            if(store.getState().brands.length) {
                 return;
             }else {
                 dispatch(actionToggleLoading(true))
                 setTimeout(() => {
-                    dispatch(actionGetCategories());
+                    dispatch(actionGetBrands());
                     dispatch(actionToggleLoading(false))
                 },2000);
             }
         },
-        storeCategory: (id,data) => {
-            return dispatch(id ? actionUpdateCategory(id,data) : actionStoreCategory(data));
+        storeBrand: (data) => {
+            return dispatch(actionStoreBrand(data));
         }
     }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(Categories);
+export default connect(mapStateToProps, mapDispatchToProps)(Brands);

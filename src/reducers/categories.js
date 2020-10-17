@@ -7,9 +7,10 @@ export const categories = (state = initialState, action) => {
             state = action.categories;
             return [...state];
         case ADD_CATEGORY_SUCCESS:
+            state.push(action.category);
             return [...state];
         case UPDATE_CATEGORY_SUCCESS:
-            // state.push(action.category)
+            state[state.indexOf(state.find(s => s._id === action.category._id))] = action.category;
             return [...state];
         default:
             return [...state];

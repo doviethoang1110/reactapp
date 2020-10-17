@@ -19,9 +19,9 @@ export const actionStoreCategory = (category) => {
             .then(response => {
                 dispatch({
                     type: ADD_CATEGORY_SUCCESS,
-                    category: response.data._doc,
+                    category: response.data,
                 });
-                return Promise.resolve('Added successfully');
+                return Promise.resolve({message:'Added successfully',id:undefined});
             })
             .catch(error => {
                 dispatch({
@@ -38,11 +38,12 @@ export const actionUpdateCategory = (id,category) => {
             .then(response => {
                 dispatch({
                     type: UPDATE_CATEGORY_SUCCESS,
-                    category: response.data._doc,
+                    category: response.data,
                 });
-                return Promise.resolve('Update successfully');
+                return Promise.resolve({message:'Update successfully',id:response.data._id});
             })
             .catch(error => {
+                console.log(error)
                 console.log(error.message)
                 dispatch({
                     type: 'FAILURE'
