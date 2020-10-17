@@ -5,13 +5,16 @@ import BrandForm from "../components/brand/BrandForm";
 import {actionGetBrands, actionStoreBrand} from "../actions/brand";
 import {actionToggleLoading} from "../actions/loading";
 import store from '../store';
+import Pagination from "../components/Pagination";
 
 class Brands extends Component {
     constructor(props) {
         super(props);
         this.state = {
             brand: { name: '', image: null, status: false },
-            isOpened: false
+            isOpened: false,
+            currentPage: 1,
+            itemsPerPage: 2
         }
     }
     componentDidMount() {
@@ -40,10 +43,19 @@ class Brands extends Component {
             isOpened: false
         });
     }
+    paginate = (e,page) => {
+        e.preventDefault();
+        this.setState({
+            currentPage:page
+        })
+    }
 
     render() {
-        let { brand } = this.state;
+        let { brand, itemsPerPage, currentPage } = this.state;
         let { brands } = this.props;
+        let lastItem = currentPage * itemsPerPage;
+        let firstItem = lastItem - itemsPerPage;
+        let currentItems = brands.slice(firstItem,lastItem);
         return (
             <div className="row">
                 <div className="col-md-12">
@@ -66,7 +78,14 @@ class Brands extends Component {
                     {/* /.card */}
                 </div>
                 <div className={`card-body table-responsive p-0 ${this.state.isOpened ? 'col-md-7' : 'col-md-12'}`}>
-                    <BrandList items={brands}/>
+                    <BrandList items={currentItems}/>
+                    <Pagination
+                        itemsPerPage={2}
+                        totalItems={brands}
+                        currentPage={currentPage}
+                        changePage={this.paginate}
+                    >
+                    </Pagination>
                 </div>
                 {/* /.card-body */}
                 {this.state.isOpened ? (

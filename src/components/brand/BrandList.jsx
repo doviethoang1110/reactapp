@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { IMAGE_URL } from "../../constants/config";
 
 const BrandList = (props) => {
@@ -23,20 +23,22 @@ const BrandList = (props) => {
             </tr>
         ));
         return (
-            <table className="table table-hover text-nowrap">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Image</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
+            <React.Fragment>
+                <table className="table table-hover text-nowrap">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Image</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     {list}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </React.Fragment>
         );
     }
 }
