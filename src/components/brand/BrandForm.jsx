@@ -4,6 +4,7 @@ import store from "../../store";
 import {actionToggleLoading} from "../../actions/loading";
 import {toast} from "../../utils/alert";
 import {IMAGE_URL} from "../../constants/config";
+import SimpleReactValidator from "simple-react-validator";
 
 class BrandForm extends Component{
     constructor(props) {
@@ -12,39 +13,21 @@ class BrandForm extends Component{
             name: '',
             image: null,
             status: false,
-            errors: {},
             url:null,
             image_name:''
         }
-        const rules = [
-            {
-                field: 'name',
-                method: 'isEmpty',
-                validWhen: false,
-                message: 'Tên không được rỗng',
+        this.validator = new SimpleReactValidator({
+            messages: {
+                required: ':attribute không được rỗng',
+                numeric: ':attribute phải là số'
             },
-            {
-                field: 'name',
-                method: 'isLength',
-                args: [{min: 2}],
-                validWhen: true,
-                message: 'Tên ít nhất 2 ký tự',
-            },
-            {
-                field: 'name',
-                method: 'isLength',
-                args: [{max: 20}],
-                validWhen: true,
-                message: 'Tên không vượt quá 20 ký tự',
-            },
-        ];
-        this.validator = new Validator(rules);
+            className: 'text-danger'
+        });
     }
 
     componentDidMount() {
         if (this.props.brand) {
             this.setState({
-                errors: {},
                 name: this.props.brand.name,
                 image: this.props.brand.image,
                 status: this.props.brand.status,
@@ -55,7 +38,6 @@ class BrandForm extends Component{
     }
     componentWillReceiveProps(props) {
         this.setState({
-            errors: {},
             name: props.brand.name,
             image: props.brand.image,
             status: props.brand.status,
@@ -73,23 +55,19 @@ class BrandForm extends Component{
             document.getElementById('err_image').innerText = 'Ảnh không được rỗng';
             return;
         }
-        let validateError = this.validator.validate(this.state);
-        if(Object.keys(validateError).length) {
-            this.setState({
-                errors: this.validator.validate(this.state),
-            });
-        }else {
-            let em = {name,image,status};
-            let data = new FormData();
-            for (let d of Object.keys(em)) {
-                data.append(d,em[d]);
-            }
+        let em = {name,image,status};
+        let data = new FormData();
+        for (let d of Object.keys(em)) {
+            data.append(d,em[d]);
+        }
+        if(this.validator.allValid()) {
             store.dispatch(actionToggleLoading(true));
             setTimeout(() => {
                 this.props.submitHandle(this.props.brand.id,data)
                     .then(response => {
                         this.props.brand.id ? this.props.eventEdit(response.id) : this.refreshForm();
                         store.dispatch(actionToggleLoading(false))
+                        for(let a of document.getElementsByClassName('errorMsg')) a.innerText = '';
                         toast('success',response.message)
                     })
                     .catch(error => {
@@ -100,6 +78,9 @@ class BrandForm extends Component{
                         }
                     });
             },1000);
+        } else {
+            this.forceUpdate();
+            this.validator.showMessages();
         }
     }
     refreshForm = () => {
@@ -127,9 +108,17 @@ class BrandForm extends Component{
         });
     }
 
+    // form Change
+    checkFormChange = () => {
+        let { brand } = this.props;
+        let { name, image, status} = this.state;
+        return (brand.name === name && brand.image === image && brand.status === status);
+    }
+
     render() {
-        let {name,status,errors,url,image_name} = this.state;
+        let {name,status,url,image_name} = this.state;
         let { id,image } = this.props.brand;
+        console.log(image)
         return (
             <div className={`card ${id ? 'card-warning' : 'card-primary'}`}>
                 <div className="card-header">
@@ -147,8 +136,8 @@ class BrandForm extends Component{
                                 onChange={this.handleChange}
                                 id="name"
                                 placeholder="Nhập tên danh mục" />
-                            {errors.name && <div className="text-danger" style={{display: 'block'}}>{errors.name}</div>}
-                            <span className="text-danger" id="err_name"></span>
+                            {this.validator.message('Tên', name, 'required|min:2|max:20')}
+                            <span className="text-danger errorMsg" id="err_name"></span>
                         </div>
                         <div className="form-group">
                             <label htmlFor="parentId">Ảnh</label>
@@ -160,17 +149,16 @@ class BrandForm extends Component{
                                         <label className="custom-file-label" htmlFor="image">{image_name ? image_name : 'Choose file'}</label>
                                 </div>
                             </div>
-                            { image ? (
+                            { image && (
                                 <div className='mt-2' id="img_show">
                                     <img alt='' src={IMAGE_URL+image} width={'200px'}/>
                                 </div>
-                            ) : null}
-                            { url ? (
+                            )}
+                            { url && (
                                 <div className='mt-2'>
                                     <img alt='' src={url} width={'200px'}/>
                                 </div>
-                            ) : null}
-                            {errors.image && <div className="text-danger" style={{display: 'block'}}>{errors.image}</div>}
+                            )}
                             <span className="text-danger" id="err_image"></span>
                         </div>
                         <div className="icheck-primary">
@@ -181,12 +169,13 @@ class BrandForm extends Component{
                                 value={status}
                                 className="form-check-input" id="status" />
                             <label className="form-check-label" htmlFor="status">Active</label>
-                            <span className="text-danger" id="err_status"></span>
+                            <span className="text-danger errorMsg" id="err_status"></span>
+                            {this.validator.message('Trạng thái', status, 'required')}
                         </div>
                     </div>
                     {/* /.card-body */}
                     <div className="card-footer">
-                        <button type="submit" className="btn btn-primary">Submit</button>
+                        <button type="submit" disabled={this.checkFormChange()} className="btn btn-primary">Submit</button>
                     </div>
                 </form>
             </div>

@@ -10,8 +10,7 @@ class CategoryForm extends Component {
         this.state = {
             name: '',
             parentId: 0,
-            status: false,
-            errors: {},
+            status: false
         }
         this.validator = new SimpleReactValidator({
             messages: {
@@ -27,7 +26,6 @@ class CategoryForm extends Component {
                 name: this.props.category.name,
                 parentId: this.props.category.parentId,
                 status: this.props.category.status,
-                errors: {}
             })
         }
     }
@@ -36,49 +34,32 @@ class CategoryForm extends Component {
             name: props.category.name,
             parentId: props.category.parentId,
             status: props.category.status,
-            errors:{}
         })
     }
     handleSubmit = async (e) => {
         e.preventDefault();
         let {name,parentId,status} = this.state;
-        // if (this.validator.allValid()) {
-        //     store.dispatch(actionToggleLoading(true))
-        //     setTimeout(() => {
-        //         this.props.submitHandle(this.props.category._id,{name,parentId,status})
-        //             .then(response => {
-        //                 if(this.props.category._id) this.props.eventEdit(response.id);
-        //                 store.dispatch(actionToggleLoading(false))
-        //                 toast('success',response.message)
-        //             })
-        //             .catch(error => {
-        //                 store.dispatch(actionToggleLoading(false));
-        //                 console.log(error)
-        //                 for(let e in error) {
-        //                     document.getElementById('err_'+e).innerText = error[e];
-        //                 }
-        //             });
-        //     },1000);
-        // } else {
-        //     this.forceUpdate();
-        //     this.validator.showMessages();
-        // }
-        store.dispatch(actionToggleLoading(true))
-        setTimeout(() => {
-            this.props.submitHandle(this.props.category._id,{name,parentId,status})
-                .then(response => {
-                    if(this.props.category._id) this.props.eventEdit(response.id);
-                    store.dispatch(actionToggleLoading(false))
-                    toast('success',response.message)
-                })
-                .catch(error => {
-                    store.dispatch(actionToggleLoading(false));
-                    console.log(error)
-                    for(let e in error) {
-                        document.getElementById('err_'+e).innerText = error[e];
-                    }
-                });
-        },1000);
+        if (this.validator.allValid()) {
+            store.dispatch(actionToggleLoading(true))
+            setTimeout(() => {
+                this.props.submitHandle(this.props.category.id,{name,parentId,status})
+                    .then(response => {
+                        if(this.props.category.id) this.props.eventEdit(response.id);
+                        store.dispatch(actionToggleLoading(false));
+                        for(let a of document.getElementsByClassName('errorMsg')) a.innerText = '';
+                        toast('success',response.message)
+                    })
+                    .catch(error => {
+                        store.dispatch(actionToggleLoading(false));
+                        console.log(error)
+                        for(let e in error)
+                            document.getElementById('err_'+e).innerText = error[e];
+                    });
+            },1000);
+        } else {
+            this.forceUpdate();
+            this.validator.showMessages();
+        }
     }
 
     handleChange = (e) => {
@@ -86,9 +67,14 @@ class CategoryForm extends Component {
             [e.target.name] : e.target.type === 'checkbox' ? e.target.checked : e.target.value
         });
     }
+    formHasChanged = () => {
+        let { category } = this.props;
+        let { name, parentId, status } = this.state;
+        return (name === category.name && parseInt(parentId) === category.parentId && status === category.status);
+    }
     render() {
         let { category, closeForm } = this.props;
-        let { name, parentId, status, errors } = this.state;
+        let { name, parentId, status } = this.state;
         let { id } = category;
         return (
             <div className={id ? 'card card-warning' : 'card card-primary'}>
@@ -108,7 +94,7 @@ class CategoryForm extends Component {
                                 id="name"
                                 placeholder="Nhập tên danh mục" />
                             {this.validator.message('Tên', name, 'required|min:2|max:20')}
-                            <span className="text-danger" id="err_name"></span>
+                            <span className="text-danger errorMsg" id="err_name"></span>
                         </div>
                         <div className="form-group">
                             <label htmlFor="parentId">Danh mục cha</label>
@@ -117,7 +103,7 @@ class CategoryForm extends Component {
                                 <Select treeData={this.props.treeData} space={''} />
                             </select>
                             {this.validator.message('Danh mục cha', parentId, 'required|numeric')}
-                            <span className="text-danger" id="err_parentId"></span>
+                            <span className="text-danger errorMsg" id="err_parentId"></span>
                         </div>
                         <div className="form-check">
                             <input
@@ -128,12 +114,12 @@ class CategoryForm extends Component {
                                 className="form-check-input" id="status" />
                             <label className="form-check-label" htmlFor="status">Hiển thị</label>
                             {this.validator.message('Trạng thái', status, 'required')}
-                            <span className="text-danger" id="err_status"></span>
+                            <span className="text-danger errorMsg" id="err_status"></span>
                         </div>
                     </div>
                     {/* /.card-body */}
                     <div className="card-footer">
-                        <button type="submit" className="btn btn-primary">Submit</button>
+                        <button type="submit" disabled={this.formHasChanged()} className="btn btn-primary">Submit</button>
                     </div>
                 </form>
             </div>

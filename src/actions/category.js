@@ -40,7 +40,7 @@ export const actionUpdateCategory = (id,category) => {
                     type: UPDATE_CATEGORY_SUCCESS,
                     category: response.data,
                 });
-                return Promise.resolve({message:'Update successfully',id:response.data._id});
+                return Promise.resolve({message:'Update successfully',id:response.data.id});
             })
             .catch(error => {
                 console.log(error)

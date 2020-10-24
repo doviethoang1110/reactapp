@@ -40,7 +40,7 @@ export const actionUpdateBrand = (id,brand) => {
                     type: UPDATE_BRAND_SUCCESS,
                     brand: response.data,
                 });
-                return Promise.resolve({message:'Update successfully',id:response.data._id});
+                return Promise.resolve({message:'Update successfully',id:response.data.id});
             })
             .catch(error => {
                 console.log(error)
