@@ -3,7 +3,7 @@ import React,{Component} from "react";
 class Header extends Component {
     render() {
         return (
-            <div>
+            <React.Fragment>
                 <nav className="main-header navbar navbar-expand navbar-white navbar-light">
                     <ul className="navbar-nav">
                         <li className="nav-item">
@@ -132,7 +132,7 @@ class Header extends Component {
                         </li>
                     </ul>
                 </nav>
-            </div>
+            </React.Fragment>
         );
     }
 }

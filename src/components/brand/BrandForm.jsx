@@ -3,6 +3,7 @@ import Validator from "../../utils/Validator";
 import store from "../../store";
 import {actionToggleLoading} from "../../actions/loading";
 import {toast} from "../../utils/alert";
+import {IMAGE_URL} from "../../constants/config";
 
 class BrandForm extends Component{
     constructor(props) {
@@ -43,25 +44,32 @@ class BrandForm extends Component{
     componentDidMount() {
         if (this.props.brand) {
             this.setState({
-                ...this.state,
+                errors: {},
                 name: this.props.brand.name,
                 image: this.props.brand.image,
                 status: this.props.brand.status,
+                url: null,
+                image_name: ''
             })
         }
     }
     componentWillReceiveProps(props) {
         this.setState({
-            ...this.state,
+            errors: {},
             name: props.brand.name,
             image: props.brand.image,
             status: props.brand.status,
-        })
+            url: null,
+            image_name: ''
+        });
+        let dom = document.getElementById('img_show');
+        if(dom) dom.hidden = false;
     }
+
     handleSubmit = async (e) => {
         e.preventDefault();
         let {name,image,status} = this.state;
-        if(!image) {
+        if(!this.props.brand.id && !image) {
             document.getElementById('err_image').innerText = 'Ảnh không được rỗng';
             return;
         }
@@ -78,9 +86,9 @@ class BrandForm extends Component{
             }
             store.dispatch(actionToggleLoading(true));
             setTimeout(() => {
-                this.props.submitHandle(data)
+                this.props.submitHandle(this.props.brand.id,data)
                     .then(response => {
-                        this.refreshForm();
+                        this.props.brand.id ? this.props.eventEdit(response.id) : this.refreshForm();
                         store.dispatch(actionToggleLoading(false))
                         toast('success',response.message)
                     })
@@ -105,6 +113,8 @@ class BrandForm extends Component{
     handleChange = (e) => {
         if(e.target.type === 'file') {
             let file = e.target.files[[0]];
+            let dom = document.getElementById('img_show');
+            if(dom) dom.hidden = true;
             this.setState({
                 ...this.state,
                 image_name:file.name,
@@ -118,11 +128,12 @@ class BrandForm extends Component{
     }
 
     render() {
-        let {name,image,status,errors,url,image_name} = this.state;
+        let {name,status,errors,url,image_name} = this.state;
+        let { id,image } = this.props.brand;
         return (
-            <div className='card card-primary'>
+            <div className={`card ${id ? 'card-warning' : 'card-primary'}`}>
                 <div className="card-header">
-                    <h3 className="card-title">Thêm mới nhãn hiệu</h3>
+                    <h3 className="card-title">{id ? 'Cập nhật' : 'Thêm mới'} nhãn hiệu</h3>
                     <span onClick={this.props.closeForm} style={{ float: 'right', cursor: 'pointer' }}><i className="fa fa-times"></i></span>
                 </div>
                 <form onSubmit={this.handleSubmit}>
@@ -149,9 +160,14 @@ class BrandForm extends Component{
                                         <label className="custom-file-label" htmlFor="image">{image_name ? image_name : 'Choose file'}</label>
                                 </div>
                             </div>
+                            { image ? (
+                                <div className='mt-2' id="img_show">
+                                    <img alt='' src={IMAGE_URL+image} width={'200px'}/>
+                                </div>
+                            ) : null}
                             { url ? (
                                 <div className='mt-2'>
-                                    <img src={url} width={'200px'}/>
+                                    <img alt='' src={url} width={'200px'}/>
                                 </div>
                             ) : null}
                             {errors.image && <div className="text-danger" style={{display: 'block'}}>{errors.image}</div>}

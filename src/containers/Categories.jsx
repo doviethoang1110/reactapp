@@ -33,7 +33,7 @@ class Categories extends Component {
     editCategory = (id) => {
         this.setState({
             isOpened: true,
-            category: this.props.categories.find(cat => cat._id === id)
+            category: this.props.categories.find(cat => cat.id === id)
         })
     }
 

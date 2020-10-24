@@ -10,7 +10,7 @@ export const brands = (state = initialState, action) => {
             state.push(action.brand);
             return [...state];
         case UPDATE_BRAND_SUCCESS:
-            // state[state.indexOf(state.find(s => s._id === action.category._id))] = action.category;
+            state[state.indexOf(state.find(s => s._id === action.brand._id))] = action.brand;
             return [...state];
         default:
             return [...state];

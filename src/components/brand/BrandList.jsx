@@ -1,23 +1,23 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { IMAGE_URL } from "../../constants/config";
 
 const BrandList = (props) => {
-    // const edit = (id, e) => {
-    //     e.stopPropagation();
-    //     props.event(id);
-    // }
+    const edit = (e,id) => {
+        e.preventDefault();
+        props.eventEdit(id);
+    }
 
     if (!props.items || !props.items.length) {
         return null;
     } else {
         let list = props.items.map(item => (
-            <tr key={item._id}>
-                <td>{item._id}</td>
+            <tr key={item.id}>
+                <td>{item.id}</td>
                 <td>{item.name}</td>
-                <td><img src={IMAGE_URL+item.image} width={'100px'}/></td>
+                <td><img alt='' src={IMAGE_URL+item.image} width={'100px'}/></td>
                 <td><span className={item.status ? 'badge badge-success' : 'badge badge-danger'}>{item.status ? 'Active' : 'Disable'}</span></td>
                 <td>
-                    <button style={{ marginRight: '5px' }} type="button" className="btn btn-outline-warning"><i className="fa fa-pen"></i></button>
+                    <button onClick={(e) => edit(e,item.id)} style={{ marginRight: '5px' }} type="button" className="btn btn-outline-warning"><i className="fa fa-pen"></i></button>
                     <button type="button" className="btn btn-outline-danger"><i className="fa fa-trash"></i></button>
                 </td>
             </tr>
@@ -35,7 +35,7 @@ const BrandList = (props) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {list}
+                        {list}
                     </tbody>
                 </table>
             </React.Fragment>

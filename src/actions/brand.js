@@ -1,9 +1,9 @@
 import callApi from "../utils/api";
-import {ADD_BRAND_SUCCESS, GET_BRANDS} from "../constants/ActionTypes";
+import {ADD_BRAND_SUCCESS, GET_BRANDS, UPDATE_BRAND_SUCCESS} from "../constants/ActionTypes";
 
 export const actionGetBrands = () => {
     return (dispatch) => {
-        callApi('brands')
+         callApi('brands')
             .then(response => {
                 dispatch({
                     type: GET_BRANDS,
@@ -32,23 +32,22 @@ export const actionStoreBrand = (brand) => {
     }
 }
 
-// export const actionUpdateCategory = (id,category) => {
-//     return (dispatch) => {
-//         return callApi(`categories/${id}`, 'PUT', category)
-//             .then(response => {
-//                 dispatch({
-//                     type: UPDATE_CATEGORY_SUCCESS,
-//                     category: response.data,
-//                 });
-//                 return Promise.resolve({message:'Update successfully',id:response.data._id});
-//             })
-//             .catch(error => {
-//                 console.log(error)
-//                 console.log(error.message)
-//                 dispatch({
-//                     type: 'FAILURE'
-//                 });
-//                 return Promise.reject(error.response.data);
-//             });
-//     }
-// }
+export const actionUpdateBrand = (id,brand) => {
+    return (dispatch) => {
+        return callApi(`brands/${id}`, 'POST', brand,'multipart/form-data')
+            .then(response => {
+                dispatch({
+                    type: UPDATE_BRAND_SUCCESS,
+                    brand: response.data,
+                });
+                return Promise.resolve({message:'Update successfully',id:response.data._id});
+            })
+            .catch(error => {
+                console.log(error)
+                dispatch({
+                    type: 'FAILURE'
+                });
+                return Promise.reject(error.response.data);
+            });
+    }
+}
