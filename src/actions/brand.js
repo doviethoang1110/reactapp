@@ -1,5 +1,11 @@
 import callApi from "../utils/api";
-import {ADD_BRAND_SUCCESS, GET_BRANDS, UPDATE_BRAND_SUCCESS} from "../constants/ActionTypes";
+import {
+    ADD_BRAND_SUCCESS,
+    DELETE_BRAND_SUCCESS,
+    GET_BRANDS,
+    RESTORE_BRAND_SUCCESS,
+    UPDATE_BRAND_SUCCESS
+} from "../constants/ActionTypes";
 
 export const actionGetBrands = () => {
     return (dispatch) => {
@@ -41,6 +47,44 @@ export const actionUpdateBrand = (id,brand) => {
                     brand: response.data,
                 });
                 return Promise.resolve({message:'Update successfully',id:response.data.id});
+            })
+            .catch(error => {
+                console.log(error)
+                dispatch({
+                    type: 'FAILURE'
+                });
+                return Promise.reject(error.response.data);
+            });
+    }
+}
+export const actionDeleteBrand = (id) => {
+    return (dispatch) => {
+        return callApi(`brands/${id}`, 'PATCH')
+            .then(response => {
+                dispatch({
+                    type: DELETE_BRAND_SUCCESS,
+                    brand: id
+                });
+                return Promise.resolve("Delete successfully");
+            })
+            .catch(error => {
+                console.log(error)
+                dispatch({
+                    type: 'FAILURE'
+                });
+                return Promise.reject(error.response.data);
+            });
+    }
+}
+export const actionRestoreBrand = (id) => {
+    return (dispatch) => {
+        return callApi(`brands/restore/${id}`, 'PATCH')
+            .then(response => {
+                dispatch({
+                    type: RESTORE_BRAND_SUCCESS,
+                    brand: response.data,
+                });
+                return Promise.resolve("Restore successfully");
             })
             .catch(error => {
                 console.log(error)
