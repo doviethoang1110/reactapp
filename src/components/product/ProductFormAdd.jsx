@@ -12,6 +12,9 @@ import InputNumber from "../InputNumber";
 import {resetState} from "../../utils/helpers";
 import SimpleReactValidator from "simple-react-validator";
 import callApi from "../../utils/api";
+import { createBrowserHistory } from "history";
+import {toast} from "../../utils/alert";
+import {NavLink} from "react-router-dom";
 
 class ProductFormAdd extends Component {
     constructor(props) {
@@ -182,7 +185,6 @@ class ProductFormAdd extends Component {
                 text += `${k} `
             }
         });
-        console.log(document.getElementById('error_sku').innerText)
         document.getElementById('error_sku').innerText = text ? text + 'đã tồn tại' : text;
         return text;
     }
@@ -193,25 +195,25 @@ class ProductFormAdd extends Component {
         let uniqueOptions = new Set(options.map(o => o.name.trim().toLowerCase()));
         let uniqueSkus = skus.map(s => s.code.trim().toUpperCase());
         if(uniqueOptions.size !== options.length) {
-            console.log('option')
             document.getElementById('error_option').innerText = uniqueOptions.size !== options.length ? 'Tên options là duy nhất' : '';
             return;
         }
         if(document.getElementById('error_sku')) {
             if(this.validateSku(uniqueSkus)) {
-                console.log('sku')
                 return;
             }
         }
         if (this.validator.allValid()) {
-            console.log('success')
             let data = {...this.state.product};
             data.options = options;
             data.skus = skus;
-            callApi('products','POST',data).then(res => console.log(res))
-                .catch(error => console.log(error))
+            callApi('products','POST',data).then(res => {
+                createBrowserHistory().goBack()
+                toast('success',res.data)
+            }).catch(error => {
+                document.getElementById('error_sku').innerText = error.response.data
+            })
         } else {
-            console.log('fail')
             this.forceUpdate();
             this.validator.showMessages();
         }
@@ -225,12 +227,12 @@ class ProductFormAdd extends Component {
         let listSkus;
         if(brands.length) {
             listBrands = brands.map((b,index) => (
-                <option key={index} value={+b._id}>{b.name}</option>
+                <option key={index} value={+b.id}>{b.name}</option>
             ));
         }else listBrands = null;
         if(categories.length) {
             listCategories = categories.map((c,index) => (
-                <option key={index} value={+c._id}>{c.name}</option>
+                <option key={index} value={+c.id}>{c.name}</option>
             ));
         }else listCategories = null;
         if(skus.length) {
@@ -307,6 +309,7 @@ class ProductFormAdd extends Component {
         return (
             <div className='row'>
                 <div className='col-md-12'>
+                    <NavLink to="/products" className='btn btn-outline-info'><i className='fa fa-step-backward'></i> Back</NavLink>
                     <h2 style={{color: 'red'}}>Product</h2>
                     <form onSubmit={this.submitForm}>
                         <div className='container-fluid'>

@@ -1,5 +1,4 @@
 import React,{Component} from "react";
-import Validator from "../../utils/Validator";
 import store from "../../store";
 import {actionToggleLoading} from "../../actions/loading";
 import {toast} from "../../utils/alert";
@@ -118,7 +117,6 @@ class BrandForm extends Component{
     render() {
         let {name,status,url,image_name} = this.state;
         let { id,image } = this.props.brand;
-        console.log(image)
         return (
             <div className={`card ${id ? 'card-warning' : 'card-primary'}`}>
                 <div className="card-header">

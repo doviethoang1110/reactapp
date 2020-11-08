@@ -4,6 +4,7 @@ import NotFound from "./components/404";
 import Brands from "./containers/Brands";
 import ProductFormAdd from "./components/product/ProductFormAdd";
 import Products from "./containers/Products";
+import ProductFormEdit from "./components/product/ProductFormEdit";
 
 const routes = [
     {
@@ -25,6 +26,10 @@ const routes = [
     {
         path: '/products/add',
         component: ProductFormAdd
+    },
+    {
+        path: '/products/edit/:id',
+        component: ProductFormEdit
     },
     {
         path: '',

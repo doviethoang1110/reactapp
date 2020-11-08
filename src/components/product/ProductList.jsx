@@ -1,5 +1,6 @@
 import React from "react";
 import {IMAGE_URL} from "../../constants/config";
+import {NavLink} from "react-router-dom";
 
 const ProductList = (props) => {
     const renderPriority = (param) => {
@@ -84,7 +85,7 @@ const ProductList = (props) => {
                 <tbody>
                     {(props.items || props.items.length) &&
                     (props.items.map((item,index) => (
-                        <tr key={item._id}>
+                        <tr key={item.id}>
                             <td><div className="icheck-primary">
                                 <input
                                     id={`check${index}`}
@@ -110,7 +111,9 @@ const ProductList = (props) => {
                             <td>{renderVision(item.vision)}</td>
                             <td>{renderStatus(item.status)}</td>
                             <td>
-                                <button style={{ marginRight: '5px' }} type="button" className="btn btn-outline-warning"><i className="fa fa-pen"></i></button>
+                                <NavLink to={`/products/edit/${item.id}`} style={{ marginRight: '5px' }} type="button" className="btn btn-outline-warning">
+                                    <i className="fa fa-pen"></i>
+                                </NavLink>
                                 <button type="button" className="btn btn-outline-danger"><i className="fa fa-trash"></i></button>
                             </td>
                         </tr>
