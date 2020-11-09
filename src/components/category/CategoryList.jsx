@@ -6,6 +6,10 @@ const CategoryList = (props) => {
         e.stopPropagation();
         props.event(id);
     }
+    const remove = (id, e) => {
+        e.stopPropagation();
+        props.eventRemove(id);
+    }
     const toggle = (id, e) => {
         e.stopPropagation();
         let ele = document.getElementById(id);
@@ -34,7 +38,7 @@ const CategoryList = (props) => {
                 </i> {item.name}
                 <div className={item.children.length === 0 ? 'button button1' : 'button'}>
                     <div><button onClick={(e) => edit(item.id, e)} style={{ marginRight: '5px' }} type="button" className="btn btn-warning"><i className="fa fa-pen"></i></button></div>
-                    <div><button type="button" className="btn btn-danger"><i className="fa fa-trash"></i></button></div>
+                    <div><button onClick={(e) => remove(item.id, e)} type="button" className="btn btn-danger"><i className="fa fa-trash"></i></button></div>
                 </div>
                 {item.children.length > 0 ? (<ul id={item.id} style={{ display: 'none', marginLeft: '50px' }}>
                     <CategoryList items={item.children} event={props.event}></CategoryList>

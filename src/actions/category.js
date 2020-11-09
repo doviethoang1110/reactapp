@@ -1,4 +1,9 @@
-import { ADD_CATEGORY_SUCCESS, UPDATE_CATEGORY_SUCCESS, GET_CATEGORIES } from '../constants/ActionTypes';
+import {
+    ADD_CATEGORY_SUCCESS,
+    UPDATE_CATEGORY_SUCCESS,
+    GET_CATEGORIES,
+    DELETE_CATEGORY_SUCCESS, RESTORE_CATEGORY_SUCCESS
+} from '../constants/ActionTypes';
 import callApi from "../utils/api";
 
 export const actionGetCategories = () => {
@@ -45,6 +50,44 @@ export const actionUpdateCategory = (id,category) => {
             .catch(error => {
                 console.log(error)
                 console.log(error.message)
+                dispatch({
+                    type: 'FAILURE'
+                });
+                return Promise.reject(error.response.data);
+            });
+    }
+}
+export const actionDeleteCategory = (id) => {
+    return (dispatch) => {
+        return callApi(`categories/${id}`, 'PATCH')
+            .then(response => {
+                dispatch({
+                    type: DELETE_CATEGORY_SUCCESS,
+                    category: id
+                });
+                return Promise.resolve("Delete successfully");
+            })
+            .catch(error => {
+                console.log(error)
+                dispatch({
+                    type: 'FAILURE'
+                });
+                return Promise.reject(error.response.data);
+            });
+    }
+}
+export const actionRestoreCategory = (id) => {
+    return (dispatch) => {
+        return callApi(`categories/restore/${id}`, 'PATCH')
+            .then(response => {
+                dispatch({
+                    type: RESTORE_CATEGORY_SUCCESS,
+                    category: response.data,
+                });
+                return Promise.resolve("Restore successfully");
+            })
+            .catch(error => {
+                console.log(error)
                 dispatch({
                     type: 'FAILURE'
                 });

@@ -1,4 +1,9 @@
-import { ADD_CATEGORY_SUCCESS, GET_CATEGORIES, UPDATE_CATEGORY_SUCCESS } from '../constants/ActionTypes';
+import {
+    ADD_CATEGORY_SUCCESS, DELETE_CATEGORY_SUCCESS,
+    GET_CATEGORIES,
+    RESTORE_CATEGORY_SUCCESS,
+    UPDATE_CATEGORY_SUCCESS
+} from '../constants/ActionTypes';
 let initialState = [];
 
 export const categories = (state = initialState, action) => {
@@ -11,6 +16,12 @@ export const categories = (state = initialState, action) => {
             return [...state];
         case UPDATE_CATEGORY_SUCCESS:
             state[state.indexOf(state.find(s => s._id === action.category._id))] = action.category;
+            return [...state];
+        case RESTORE_CATEGORY_SUCCESS:
+            state.push(action.category);
+            return [...state];
+        case DELETE_CATEGORY_SUCCESS:
+            state.splice(state.indexOf(state.find(s => s.id === action.category)),1);
             return [...state];
         default:
             return [...state];
