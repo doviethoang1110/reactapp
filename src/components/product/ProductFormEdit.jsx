@@ -11,6 +11,7 @@ import {NavLink} from "react-router-dom";
 import Edit from "../../models/Edit";
 import {IMAGE_URL} from "../../constants/config";
 import SkuComponent from "./SkuComponent";
+import SimpleReactValidator from "simple-react-validator";
 
 class ProductFormEdit extends Component {
     constructor(props) {
@@ -21,6 +22,13 @@ class ProductFormEdit extends Component {
             edit: new Edit
             (this.props.match.params.id,'',0,[],1,1,1,'',false,'',[])
         }
+        this.validator = new SimpleReactValidator({
+            messages: {
+                required: ':attribute không được rỗng',
+                numeric: ':attribute phải là số'
+            },
+            className: 'text-danger'
+        });
     }
     componentDidMount() {
         this.props.getDatas();
@@ -61,29 +69,29 @@ class ProductFormEdit extends Component {
             this.setState({edit});
         }
     }
-    handleMultiImg = (e) => {
-        e.preventDefault();
-        if (e.target.files) {
-            const files = Array.from(e.target.files);
-            Promise.all(files.map(file => {
-                return (new Promise((resolve,reject) => {
-                    const reader = new FileReader();
-                    reader.addEventListener('load', (ev) => {
-                        resolve(ev.target.result);
-                    });
-                    reader.addEventListener('error', reject);
-                    reader.readAsDataURL(file);
-                }));
-            }))
-                .then(images => {
-                    let edit = {...this.state.edit};
-                    edit.imageList = images;
-                    this.setState({ edit })
-                }, error => {
-                    console.error(error);
-                });
-        }
-    }
+    // handleMultiImg = (e) => {
+    //     e.preventDefault();
+    //     if (e.target.files) {
+    //         const files = Array.from(e.target.files);
+    //         Promise.all(files.map(file => {
+    //             return (new Promise((resolve,reject) => {
+    //                 const reader = new FileReader();
+    //                 reader.addEventListener('load', (ev) => {
+    //                     resolve(ev.target.result);
+    //                 });
+    //                 reader.addEventListener('error', reject);
+    //                 reader.readAsDataURL(file);
+    //             }));
+    //         }))
+    //             .then(images => {
+    //                 let edit = {...this.state.edit};
+    //                 edit.imageList = images;
+    //                 this.setState({ edit })
+    //             }, error => {
+    //                 console.error(error);
+    //             });
+    //     }
+    // }
     handleSelect = (e) => {
         e.preventDefault();
         const options = e.target.options;
@@ -97,16 +105,28 @@ class ProductFormEdit extends Component {
     }
     submitForm = (e) => {
         e.preventDefault();
-        let edit = this.state.edit;
-        let data = new FormData();
-        for (let d of Object.keys(edit)) {
-            data.append(d,edit[d]);
+        if (this.validator.allValid()) {
+            let edit = this.state.edit;
+            let data = new FormData();
+            for (let d of Object.keys(edit)) {
+                data.append(d,edit[d]);
+            }
+            callApi('products/edit','POST',data,'multipart/form-data')
+                .then(res => {
+                    toast('success','Cập nhật thành công')
+                    let categories = res.data.categories.map(c => c.id);
+                    let brand = res.data.brand.id;
+                    let edit = {...res.data,categories,brand};
+                    this.setState({edit})
+                })
+                .catch(error => {
+                    toast('error','Có lỗi xảy ra')
+                    document.getElementById('err_img').innerText = error.response.data;
+                });
+        } else {
+            this.forceUpdate();
+            this.validator.showMessages();
         }
-        callApi('products/edit','POST',data,'multipart/form-data')
-            .then(res => console.log(res))
-            .catch(error => {
-                document.getElementById('err_img').innerText = error.response.data;
-            });
     }
 
     render() {
@@ -140,7 +160,7 @@ class ProductFormEdit extends Component {
                     </li>
                 </ul>
                 <div className="tab-content" id="myTabContent">
-                    <div className="tab-pane fade" id="product" role="tabpanel"
+                    <div className="tab-pane fade show active" id="product" role="tabpanel"
                          aria-labelledby="product-tab">
                         <div className='row'>
                             <div className='col-md-12'>
@@ -153,6 +173,7 @@ class ProductFormEdit extends Component {
                                                     <label htmlFor="name">Tên sản phẩm</label>
                                                     <input value={edit.name} onChange={this.handleChange}
                                                         className='form-control' type="text" name="name" id='name'/>
+                                                    {this.validator.message('Tên', edit.name, 'required')}
                                                 </div>
                                                 <div className="form-group">
                                                     <label htmlFor="discount">Giảm giá</label>
@@ -160,6 +181,7 @@ class ProductFormEdit extends Component {
                                                         name='discount'
                                                         className='form-control'
                                                         type="number" id='discount'/>
+                                                    {this.validator.message('Giảm giá', edit.discount, 'required|numeric')}
                                                 </div>
                                                 <div className="form-group">
                                                     <label htmlFor="description">Mô tả</label>
@@ -181,25 +203,27 @@ class ProductFormEdit extends Component {
                                                     bullist numlist outdent indent | help`
                                                         }}
                                                     />
+                                                    {this.validator.message('Mô tả', edit.description, 'required|max:2000')}
                                                 </div>
-                                                <div className="form-group">
-                                                    <label htmlFor="imageList">Ảnh mô tả</label>
-                                                    <div className="input-group">
-                                                        <div className="custom-file">
-                                                            <input type="file" multiple onChange={this.handleMultiImg}
-                                                                   className="custom-file-input" id="imageList"/>
-                                                            <label className="custom-file-label" htmlFor="imageList">Choose file</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className='row'>
-                                                    {edit.imageList && (this.state.edit.imageList.map((imageURI,index) =>
-                                                        (
-                                                            <div key={index} className={`col-md-${12/edit.imageList.length}`}>
-                                                                <img alt='imageList' width={'200px'} src={imageURI}/>
-                                                            </div>
-                                                        )))}
-                                                </div>
+                                                {/*<div className="form-group">*/}
+                                                {/*    <label htmlFor="imageList">Ảnh mô tả</label>*/}
+                                                {/*    <div className="input-group">*/}
+                                                {/*        <div className="custom-file">*/}
+                                                {/*            <input type="file" multiple onChange={this.handleMultiImg}*/}
+                                                {/*                   name="imageList"*/}
+                                                {/*                   className="custom-file-input" id="imageList"/>*/}
+                                                {/*            <label className="custom-file-label" htmlFor="imageList">Choose file</label>*/}
+                                                {/*        </div>*/}
+                                                {/*    </div>*/}
+                                                {/*</div>*/}
+                                                {/*<div className='row'>*/}
+                                                {/*    {edit.imageList && (this.state.edit.imageList.map((imageURI,index) =>*/}
+                                                {/*        (*/}
+                                                {/*            <div key={index} className={`col-md-${12/edit.imageList.length}`}>*/}
+                                                {/*                <img alt='imageList' width={'200px'} src={imageURI}/>*/}
+                                                {/*            </div>*/}
+                                                {/*        )))}*/}
+                                                {/*</div>*/}
                                             </div>
                                             <div className="col-md-4">
                                                 <div className="form-group">
@@ -209,6 +233,7 @@ class ProductFormEdit extends Component {
                                                         name='categories' id='categories' className='form-control'>
                                                         {listCategories}
                                                     </select>
+                                                    {this.validator.message('Danh mục', edit.categories, 'required')}
                                                 </div>
                                                 <div className="form-group">
                                                     <label htmlFor="brand">Nhãn hiệu</label>
@@ -217,6 +242,7 @@ class ProductFormEdit extends Component {
                                                     >
                                                         {listBrands}
                                                     </select>
+                                                    {this.validator.message('Nhãn hiệu', edit.brand, 'required')}
                                                 </div>
                                                 <div className="form-group">
                                                     <label htmlFor="priority">Độ ưu tiên</label>
@@ -225,6 +251,7 @@ class ProductFormEdit extends Component {
                                                         <option value={2}>Bán chạy</option>
                                                         <option value={3}>Nổi bật</option>
                                                     </select>
+                                                    {this.validator.message('Độ ưu tiên', edit.priority, 'required')}
                                                 </div>
                                                 <div className="form-group">
                                                     <label htmlFor="vision">Chế độ</label>
@@ -234,21 +261,24 @@ class ProductFormEdit extends Component {
                                                         <option value={1}>Được mua</option>
                                                         <option value={2}>Chỉ được xem</option>
                                                     </select>
+                                                    {this.validator.message('Chế độ', edit.vision, 'required')}
                                                 </div>
                                                 <div className="form-group">
                                                     <label htmlFor="status">Trạng thái</label>
                                                     <select onChange={this.handleChange} value={edit.status}
                                                         name='status' className='form-control' id="status"
                                                     >
-                                                        <option value={0}>Disable</option>
-                                                        <option value={1}>Active</option>
+                                                        <option value={false}>Disable</option>
+                                                        <option value={true}>Active</option>
                                                     </select>
+                                                    {this.validator.message('Trạng thái', edit.status, 'required')}
                                                 </div>
                                                 <div className="form-group">
                                                     <label htmlFor="parentId">Ảnh</label>
                                                     <div className="input-group">
                                                         <div className="custom-file">
                                                             <input type="file" onChange={this.handleChange}
+                                                                   name="image"
                                                                    className="custom-file-input" id="image"/>
                                                             <label className="custom-file-label" htmlFor="image">{image_name ? image_name : 'Choose file'}</label>
                                                         </div>
@@ -277,7 +307,7 @@ class ProductFormEdit extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="tab-pane fade show active" id="sku" role="tabpanel" aria-labelledby="sku-tab">
+                    <div className="tab-pane fade show" id="sku" role="tabpanel" aria-labelledby="sku-tab">
                         <SkuComponent items={skus} id={this.props.match.params.id}/>
                     </div>
                 </div>

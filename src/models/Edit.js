@@ -1,5 +1,5 @@
 export default class Edit {
-    constructor(id,name,discount,categories,brand,priority,vision,description,status,image,image_list) {
+    constructor(id,name,discount,categories,brand,priority,vision,description,status,image,imageList) {
         this.id = id;
         this.name = name;
         this.discount = discount;
@@ -10,6 +10,6 @@ export default class Edit {
         this.description = description;
         this.status = status;
         this.image = image;
-        this.image_list = image_list;
+        this.imageList = imageList;
     }
 }

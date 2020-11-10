@@ -35,7 +35,7 @@ class SkuComponent extends React.Component {
                 exportPrice:d.exportPrice,
                 importPrice:d.importPrice,
                 id:d.id,
-                stock: d.status === '1' ? d.quantity : (d.stock + d.quantity),
+                stock: +d.status ? +d.quantity : (+d.stock + +d.quantity),
             }))
             callApi(`products/edit/${this.props.id}/skus`,'PUT',data)
                 .then(res => {
