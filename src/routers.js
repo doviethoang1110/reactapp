@@ -5,6 +5,7 @@ import Brands from "./containers/Brands";
 import ProductFormAdd from "./components/product/ProductFormAdd";
 import Products from "./containers/Products";
 import ProductFormEdit from "./components/product/ProductFormEdit";
+import Blogs from "./containers/Blogs";
 
 const routes = [
     {
@@ -30,6 +31,10 @@ const routes = [
     {
         path: '/products/edit/:id',
         component: ProductFormEdit
+    },
+    {
+        path: '/blogs',
+        component: Blogs
     },
     {
         path: '',

@@ -22,6 +22,11 @@ const menus = [
         icon: 'fa fa-shopping-cart',
         label: 'Quản lý sản phẩm',
     },
+    {
+        path:'/blogs',
+        icon: 'fa fa-sticky-note',
+        label: 'Quản lý bài viết',
+    },
 ];
 
 class Aside extends Component {

@@ -274,7 +274,7 @@ class ProductFormEdit extends Component {
                                                     {this.validator.message('Trạng thái', edit.status, 'required')}
                                                 </div>
                                                 <div className="form-group">
-                                                    <label htmlFor="parentId">Ảnh</label>
+                                                    <label htmlFor="image">Ảnh</label>
                                                     <div className="input-group">
                                                         <div className="custom-file">
                                                             <input type="file" onChange={this.handleChange}
