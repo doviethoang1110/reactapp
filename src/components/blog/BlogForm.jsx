@@ -12,7 +12,7 @@ class BlogForm extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            blog: new Blog('','<p>Đây là mô tả</p>',false,null),
+            blog: new Blog('','<p>Đây là nội dung</p>',false,null),
             url:null,
             image: null,
             image_name:''
@@ -24,6 +24,25 @@ class BlogForm extends Component{
             },
             className: 'text-danger'
         });
+    }
+    componentDidMount() {
+        if (this.props.item) {
+            this.setState({
+                image_name:this.props.item.image,
+                image: this.props.item.image,
+                blog: this.props.item
+            })
+        }
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        this.setState({
+            image_name: nextProps.item.image,
+            image: nextProps.item.image,
+            blog: nextProps.item
+        });
+        let dom = document.getElementById('img_show');
+        if(dom) dom.hidden = false;
     }
     // handle input
     handleEditorChange = (content) => {
@@ -59,18 +78,20 @@ class BlogForm extends Component{
             const data = new FormData();
             for (let d in blog) data.append(d,blog[d]);
             store.dispatch(actionToggleLoading(true))
-            callApi('blogs','POST',data,'multipart/form-data')
-                .then(res => {
+            callApi(`blogs${blog.id ? '/'+blog.id : ''}`,'POST',data,'multipart/form-data')
+                .then(response => {
+                    const res = response.data;
                     setTimeout(() => {
                         store.dispatch(actionToggleLoading(false))
                         for(let a of document.getElementsByClassName('errorMsg')) a.innerText = '';
-                        this.props.eventAdd(res.data);
+                        const id = blog.id;
+                        id ? this.props.eventEdit(id,res) : this.props.eventAdd(res);
                         this.setState({
-                            blog:new Blog('','<p>Đây là mô tả</p>',false,null),
-                            image_name: '',
+                            blog: id ? res :new Blog('','<p>Đây là mô tả</p>',false,null),
+                            image_name: id ? res.image : '',
                             url: null
                         })
-                        toast('success', 'Added successfully')
+                        toast('success', `${blog.id ? 'Updated': 'Added'} successfully`)
                     },1500)
                 })
                 .catch(error => {
@@ -88,15 +109,15 @@ class BlogForm extends Component{
 
     // form Change
     checkFormChange = () => {
-        // let { brand } = this.props;
-        // let { name, image, status} = this.state;
-        // return (brand.name === name && brand.image === image && brand.status === status);
+        let blog = this.props.item;
+        let { title, image, status, content} = this.state.blog;
+        return (blog.title === title && blog.image === image && blog.status === status && blog.content === content);
     }
 
     render() {
         let { blog,url,image_name,image } = this.state;
         return (
-            <form role="form" onSubmit={this.submitForm}>
+            <form onSubmit={this.submitForm}>
                 <div className="card-body">
                     <div className="form-group">
                         <label htmlFor="title">Title</label>
@@ -161,7 +182,7 @@ class BlogForm extends Component{
                     </div>
                 </div>
                 <div className="card-footer">
-                    <button type="submit" className="btn btn-primary">Submit</button>
+                    <button disabled={this.checkFormChange()} type="submit" className="btn btn-primary">Submit</button>
                 </div>
             </form>
         )

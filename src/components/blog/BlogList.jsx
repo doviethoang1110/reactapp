@@ -2,6 +2,16 @@ import React from 'react';
 import { IMAGE_URL } from "../../constants/config";
 
 const BlogList = (props) => {
+
+    const edit = (e,id) => {
+        e.preventDefault();
+        props.eventEdit(id);
+    }
+    const remove = (e,id) => {
+        e.preventDefault();
+        props.eventRemove(id);
+    }
+
     let list = !props.items.length ? null : props.items.map(item => (
         <tr key={item.id}>
             <td>{item.id}</td>
@@ -9,8 +19,8 @@ const BlogList = (props) => {
             <td><img alt='' src={IMAGE_URL+item.image} width={'100px'}/></td>
             <td><span className={item.status ? 'badge badge-success' : 'badge badge-danger'}>{item.status ? 'Active' : 'Disable'}</span></td>
             <td>
-                <button type="button" className="mr-2 btn btn-outline-warning"><i className="fa fa-pen"></i></button>
-                <button type="button" className="btn btn-outline-danger"><i className="fa fa-trash"></i></button>
+                <button onClick={(e) => edit(e,item.id)} type="button" className="mr-2 btn btn-outline-warning"><i className="fa fa-pen"></i></button>
+                <button onClick={(e) => remove(e,item.id)} type="button" className="btn btn-outline-danger"><i className="fa fa-trash"></i></button>
             </td>
         </tr>
     ));

@@ -74,7 +74,7 @@ class Brands extends Component {
                 toast('success','Delete successfully');
             })
             .catch(error => {
-                toast('error',error);
+                toast('error',error.response.data);
             })
     }
     restore = (e,status) => {
