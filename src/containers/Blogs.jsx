@@ -8,7 +8,6 @@ import Pagination from "../components/Pagination";
 import {toast} from "../utils/alert";
 import Blog from "../models/Blog";
 import BlogRestore from "../components/blog/BlogRestore";
-import {RESTORE_BRAND_SUCCESS} from "../constants/ActionTypes";
 
 const Blogs = (props) => {
     // state hook

@@ -6,6 +6,7 @@ import ProductFormAdd from "./components/product/ProductFormAdd";
 import Products from "./containers/Products";
 import ProductFormEdit from "./components/product/ProductFormEdit";
 import Blogs from "./containers/Blogs";
+import Currencies from "./containers/Currencies";
 
 const routes = [
     {
@@ -35,6 +36,10 @@ const routes = [
     {
         path: '/blogs',
         component: Blogs
+    },
+    {
+        path: '/currencies',
+        component: Currencies
     },
     {
         path: '',

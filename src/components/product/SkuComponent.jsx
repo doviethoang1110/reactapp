@@ -94,7 +94,7 @@ class SkuComponent extends React.Component {
                                             <h3 style={{color:'coral'}}>{s.code}</h3>
                                             <h5>{s.values && s.values.map((m,i) => {
                                                 return (
-                                                    <span className={i===0 && 'text-success'||i===1&& 'text-primary'||i===2&& 'text-danger'}
+                                                    <span className={(i===0 && 'text-success')||(i===1&& 'text-primary')||(i===2&& 'text-danger')}
                                                           key={i}>{m}{s.values.length-1 > i ? ',' : ''}
                                                 </span>
                                                 );

@@ -27,6 +27,11 @@ const menus = [
         icon: 'fa fa-sticky-note',
         label: 'Quản lý bài viết',
     },
+    {
+        path:'/currencies',
+        icon: 'fas fa-dollar-sign',
+        label: 'Quản lý loại tiền',
+    },
 ];
 
 class Aside extends Component {
