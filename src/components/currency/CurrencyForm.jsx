@@ -1,9 +1,5 @@
 import React,{Component} from "react";
-import store from "../../store";
-import {actionToggleLoading} from "../../actions/loading";
-import {toast} from "../../utils/alert";
 import SimpleReactValidator from "simple-react-validator";
-import callApi from "../../utils/api";
 import Currency from "../../models/Currency";
 import {save} from "../../utils/helpers";
 

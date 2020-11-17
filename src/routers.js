@@ -7,6 +7,7 @@ import Products from "./containers/Products";
 import ProductFormEdit from "./components/product/ProductFormEdit";
 import Blogs from "./containers/Blogs";
 import Currencies from "./containers/Currencies";
+import Reviews from "./containers/Reviews";
 
 const routes = [
     {
@@ -40,6 +41,10 @@ const routes = [
     {
         path: '/currencies',
         component: Currencies
+    },
+    {
+        path: '/reviews',
+        component: Reviews
     },
     {
         path: '',

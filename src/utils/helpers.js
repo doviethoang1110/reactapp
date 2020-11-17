@@ -20,6 +20,11 @@ export const getCategories = (datas,id = 0) => {
     return output;
 }
 
+export const calCurrentItems = (currentPage, items, itemsPerPage = 4) => {
+    const lastItem = currentPage * itemsPerPage;
+    const firstItem = lastItem - itemsPerPage;
+    return items.slice(firstItem,lastItem);
+}
 
 export const resetState = (options,index,val ='') => {
     let skus = [];
@@ -90,12 +95,4 @@ export const modify = (url) => {
             store.dispatch(actionToggleLoading(false))
             toast('error',error.response.data);
         })
-}
-
-export const hardRemove = (url) => {
-    if(window.confirm('Bạn có chắc không'))
-        return callApi(url,'DELETE')
-            .then(() => toast('success','Delete successfully'))
-            .catch(error => toast('error','Delete failure'))
-
 }

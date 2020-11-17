@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import CurrencyList from "../components/currency/CurrencyList";
 import CurrencyForm from "../components/currency/CurrencyForm";
 import Currency from "../models/Currency";
-import {getDatas, modify, hardRemove} from "../utils/helpers";
+import {getDatas, modify} from "../utils/helpers";
 import callApi from "../utils/api";
 import {toast} from "../utils/alert";
 
@@ -45,9 +45,8 @@ const Currencies = (props) => {
             callApi(`currencies/${id}`,'DELETE')
                 .then(() => {
                     toast('success','Delete successfully');
-                    const array = [...currencies];
-                    array.splice(array.indexOf(array.find(a => a.id === id)),1);
-                    setCurrencies(array);
+                    currencies.splice(currencies.indexOf(currencies.find(a => a.id === id)),1);
+                    setCurrencies([...currencies]);
                 })
                 .catch(() => toast('error','Delete failure'))
     }

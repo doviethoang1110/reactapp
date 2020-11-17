@@ -28,6 +28,11 @@ const menus = [
         label: 'Quản lý bài viết',
     },
     {
+        path:'/reviews',
+        icon: 'fa fa-pen',
+        label: 'Quản lý bình luận',
+    },
+    {
         path:'/currencies',
         icon: 'fas fa-dollar-sign',
         label: 'Quản lý loại tiền',
