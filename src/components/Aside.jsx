@@ -37,6 +37,11 @@ const menus = [
         icon: 'fas fa-dollar-sign',
         label: 'Quản lý loại tiền',
     },
+    {
+        path:'/permissions',
+        icon: 'fa fa-unlock',
+        label: 'Quản lý quyền',
+    },
 ];
 
 class Aside extends Component {

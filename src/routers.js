@@ -8,7 +8,7 @@ import ProductFormEdit from "./components/product/ProductFormEdit";
 import Blogs from "./containers/Blogs";
 import Currencies from "./containers/Currencies";
 import Reviews from "./containers/Reviews";
-
+import Permissions from "./containers/Permissions";
 const routes = [
     {
         path: '/dashboard',
@@ -45,6 +45,10 @@ const routes = [
     {
         path: '/reviews',
         component: Reviews
+    },
+    {
+        path: '/permissions',
+        component: Permissions
     },
     {
         path: '',

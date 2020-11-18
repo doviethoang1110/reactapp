@@ -21,6 +21,7 @@ export const getCategories = (datas,id = 0) => {
 }
 
 export const calCurrentItems = (currentPage, items, itemsPerPage = 4) => {
+    if(!items.length) return [];
     const lastItem = currentPage * itemsPerPage;
     const firstItem = lastItem - itemsPerPage;
     return items.slice(firstItem,lastItem);
