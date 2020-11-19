@@ -9,6 +9,8 @@ import Blogs from "./containers/Blogs";
 import Currencies from "./containers/Currencies";
 import Reviews from "./containers/Reviews";
 import Permissions from "./containers/Permissions";
+import Roles from "./containers/Roles";
+
 const routes = [
     {
         path: '/dashboard',
@@ -49,6 +51,10 @@ const routes = [
     {
         path: '/permissions',
         component: Permissions
+    },
+    {
+        path: '/roles',
+        component: Roles
     },
     {
         path: '',

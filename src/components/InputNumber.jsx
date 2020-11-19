@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import './InputNumber.css'
 const InputNumber = (props) => {
     const [number, setNumber] = useState(1);
-    useEffect((props) => {
+    useEffect(() => {
         props.event(props.index,number);
     },[number]);
 

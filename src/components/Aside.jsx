@@ -42,6 +42,11 @@ const menus = [
         icon: 'fa fa-unlock',
         label: 'Quản lý quyền',
     },
+    {
+        path:'/roles',
+        icon: 'fa fa-child',
+        label: 'Quản lý vai trò',
+    },
 ];
 
 class Aside extends Component {

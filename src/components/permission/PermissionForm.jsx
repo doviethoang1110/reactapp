@@ -1,10 +1,5 @@
 import React,{Component} from "react";
 import SimpleReactValidator from "simple-react-validator";
-import store from "../../store";
-import {actionToggleLoading} from "../../actions/loading";
-import callApi from "../../utils/api";
-import Blog from "../../models/Blog";
-import {toast} from "../../utils/alert";
 import {save} from "../../utils/helpers";
 
 
@@ -58,26 +53,26 @@ class PermissionForm extends Component{
 
     handleSubmit = (e) => {
         e.preventDefault();
-        const id = this.state.temp.id;
-        save({
-            data: id ? this.state.temp : this.state.request,
-            id: id || null,
-            url: 'permissions',
-            eventAdd: this.props.eventAdd,
-            eventEdit: this.props.eventEdit
-        },id ? 'PUT' : 'POST').then((res) => {
-            document.getElementById("errMsg").innerText = "";
-            this.setState({temp: id ? res : {name: '', displayName: ''},request: []})
-        })
-        // if (this.validator.allValid()) {
-        //     if(!this.state.request.length) {
-        //         document.getElementById('errMsg').innerText = "Chọn tối thiểu 1";
-        //         return;
-        //     }
-        // } else {
-        //     this.forceUpdate();
-        //     this.validator.showMessages();
-        // }
+        if (this.validator.allValid()) {
+            if(!this.state.request.length) {
+                document.getElementById('errMsg').innerText = "Chọn tối thiểu 1";
+                return;
+            }
+            const id = this.state.temp.id;
+            save({
+                data: id ? this.state.temp : this.state.request,
+                id: id || null,
+                url: 'permissions',
+                eventAdd: this.props.eventAdd,
+                eventEdit: this.props.eventEdit
+            },id ? 'PUT' : 'POST').then((res) => {
+                document.getElementById("errMsg").innerText = "";
+                this.setState({temp: id ? res : {name: '', displayName: ''},request: []})
+            })
+        } else {
+            this.forceUpdate();
+            this.validator.showMessages();
+        }
     }
 
 

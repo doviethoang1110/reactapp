@@ -79,6 +79,7 @@ export const save = ({url, id, data, eventEdit, eventAdd}, method) => {
             return res;
         })
         .catch(error => {
+            console.log(error)
             store.dispatch(actionToggleLoading(false))
             for(let e in error.response.data) document.getElementById('err_'+e).innerText = error.response.data[e];
             toast('error',`${id ? 'Updated': 'Added'} failure`)
