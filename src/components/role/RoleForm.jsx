@@ -39,8 +39,16 @@ class RoleForm extends Component{
     submitForm = (e) => {
         e.preventDefault();
         const id = this.state.role.id;
-        const data = this.state.role;
-        data.permissions = data.permissions.map(p => p.id);
+        let data;
+        if(id) {
+            let newItems = this.state.role.permissions;
+            let oldItems = this.props.item.permissions;
+            newItems = newItems.map(p => p.id);
+            oldItems = oldItems.map(p => p.id);
+            const removeItems = oldItems.filter(p => !newItems.includes(p));
+            const addItems = newItems.filter(p => !oldItems.includes(p));
+            data = {...this.state.role,permissions: addItems, removeItems};
+        }else data = {...this.state.role, permissions: this.state.role.permissions.map(p => p.id)};
         save({
             data,
             id: id || null,
@@ -48,8 +56,8 @@ class RoleForm extends Component{
             eventAdd: this.props.eventAdd,
             eventEdit: this.props.eventEdit
         },id ? 'PUT' : 'POST').then((res) => {
-            this.multiselectRef.current.resetSelectedValues();
-            this.setState({role: id ? res : new Role('','',[]),permissions:[]})
+            if(!id) this.multiselectRef.current.resetSelectedValues();
+            this.setState({role: id ? res : new Role('','',[])})
         })
         // if (this.validator.allValid()) {
         //     console.log(this.state.role)
@@ -65,25 +73,24 @@ class RoleForm extends Component{
         this.setState({role})
     }
 
-    onSelect = (selectedList) => {
+    handleMultiSelect(selectedList) {
         if(this.state.role.id) this.setState({role: {...this.state.role,permissions: this.multiselectRef.current.getSelectedItems()}})
         else this.setState({role: {...this.state.role,permissions:selectedList}})
     }
 
-    onRemove = (selectedList) => {
-        if(this.state.role.id) this.setState({role: {...this.state.role,permissions: this.multiselectRef.current.getSelectedItems()}})
-        else this.setState({role: {...this.state.role,permissions:selectedList}})
-    }
+    onSelect = (selectedList) => this.handleMultiSelect(selectedList);
+
+    onRemove = (selectedList) => this.handleMultiSelect(selectedList)
 
     // form Change
     checkFormChange = () => {
-        // let blog = this.props.item;
-        // let { title, image, status, content} = this.state.blog;
-        // return (blog.title === title && blog.image === image && blog.status === status && blog.content === content);
+        const role = this.props.item;
+        let { name, displayName, permissions} = this.state.role;
+        return (role.name === name && role.displayName === displayName && permissions.every(p => role.permissions.map(e => e.id).includes(p.id)));
     }
 
     render() {
-        let { role } = this.state;
+        const { role } = this.state;
         return (
             <form onSubmit={this.submitForm}>
                 <div className="card-body">

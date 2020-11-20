@@ -54,6 +54,7 @@ const Roles = (props) => {
 
     const update = (id, data) => {
         roles[roles.indexOf(roles.find(p => p.id === id))] = data;
+        setRole(data);
         setRoles([...roles]);
     }
 
