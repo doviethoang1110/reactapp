@@ -38,33 +38,32 @@ class RoleForm extends Component{
 
     submitForm = (e) => {
         e.preventDefault();
-        const id = this.state.role.id;
-        let data;
-        if(id) {
-            let newItems = this.state.role.permissions;
-            let oldItems = this.props.item.permissions;
-            newItems = newItems.map(p => p.id);
-            oldItems = oldItems.map(p => p.id);
-            const removeItems = oldItems.filter(p => !newItems.includes(p));
-            const addItems = newItems.filter(p => !oldItems.includes(p));
-            data = {...this.state.role,permissions: addItems, removeItems};
-        }else data = {...this.state.role, permissions: this.state.role.permissions.map(p => p.id)};
-        save({
-            data,
-            id: id || null,
-            url: `roles`,
-            eventAdd: this.props.eventAdd,
-            eventEdit: this.props.eventEdit
-        },id ? 'PUT' : 'POST').then((res) => {
-            if(!id) this.multiselectRef.current.resetSelectedValues();
-            this.setState({role: id ? res : new Role('','',[])})
-        })
-        // if (this.validator.allValid()) {
-        //     console.log(this.state.role)
-        // } else {
-        //     this.forceUpdate();
-        //     this.validator.showMessages();
-        // }
+        if (this.validator.allValid()) {
+            const id = this.state.role.id;
+            let data;
+            if(id) {
+                let newItems = this.state.role.permissions;
+                let oldItems = this.props.item.permissions;
+                newItems = newItems.map(p => p.id);
+                oldItems = oldItems.map(p => p.id);
+                const removeItems = oldItems.filter(p => !newItems.includes(p));
+                const addItems = newItems.filter(p => !oldItems.includes(p));
+                data = {...this.state.role,permissions: addItems, removeItems};
+            }else data = {...this.state.role, permissions: this.state.role.permissions.map(p => p.id)};
+            save({
+                data,
+                id: id || null,
+                url: `roles`,
+                eventAdd: this.props.eventAdd,
+                eventEdit: this.props.eventEdit
+            },id ? 'PUT' : 'POST').then((res) => {
+                if(!id) this.multiselectRef.current.resetSelectedValues();
+                this.setState({role: id ? res : new Role('','',[])})
+            })
+        } else {
+            this.forceUpdate();
+            this.validator.showMessages();
+        }
     }
 
     handleChange = (e) => {
@@ -113,7 +112,7 @@ class RoleForm extends Component{
                         <span className="text-danger errorMsg" id='err_displayName'></span>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="permissions">Trạng thái</label>
+                        <label htmlFor="permissions">Quyền</label>
                         <Multiselect
                             closeIcon='cancel'
                             options={this.state.permissions}

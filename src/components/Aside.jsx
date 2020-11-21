@@ -47,6 +47,11 @@ const menus = [
         icon: 'fa fa-child',
         label: 'Quản lý vai trò',
     },
+    {
+        path:'/users',
+        icon: 'fa fa-user',
+        label: 'Phân quyền người dùng',
+    },
 ];
 
 class Aside extends Component {

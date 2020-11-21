@@ -14,3 +14,6 @@ export const DELETE_BRAND_SUCCESS = 'DELETE_BRAND_SUCCESS';
 
 // loading
 export const TOGGLE_LOADING = 'TOGGLE_LOADING';
+
+// authentication
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';

@@ -10,6 +10,7 @@ import Currencies from "./containers/Currencies";
 import Reviews from "./containers/Reviews";
 import Permissions from "./containers/Permissions";
 import Roles from "./containers/Roles";
+import Users from "./containers/Users";
 
 const routes = [
     {
@@ -55,6 +56,10 @@ const routes = [
     {
         path: '/roles',
         component: Roles
+    },
+    {
+        path: '/users',
+        component: Users
     },
     {
         path: '',
