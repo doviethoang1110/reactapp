@@ -37,33 +37,32 @@ class UserForm extends Component{
 
     submitForm = (e) => {
         e.preventDefault();
-        const id = this.props.id;
-        let data;
-        if(id) {
-            let newItems = this.state.selectedRoles;
-            let oldItems = this.props.item;
-            newItems = newItems.map(p => p.id);
-            oldItems = oldItems.map(p => p.id);
-            const removeItems = oldItems.filter(p => !newItems.includes(p));
-            const addItems = newItems.filter(p => !oldItems.includes(p));
-            data = {removeItems,addItems};
-            callApi(`users/${id}`, 'PUT', data)
-                .then(res => {
-                    toast('success', 'Phân quyền thành công')
-                    this.props.eventEdit(id, res.data.roles.map(r => ({displayName:r.displayName})));
-                    this.setState({selectedRoles:res.data.roles});
-                })
-                .catch(error => {
-                    console.log(error)
-                    toast('error', 'Phân quyền thất bại')
-                });
+        if (this.validator.allValid()) {
+            const id = this.props.id;
+            let data;
+            if(id) {
+                let newItems = this.state.selectedRoles;
+                let oldItems = this.props.item;
+                newItems = newItems.map(p => p.id);
+                oldItems = oldItems.map(p => p.id);
+                const removeItems = oldItems.filter(p => !newItems.includes(p));
+                const addItems = newItems.filter(p => !oldItems.includes(p));
+                data = {removeItems,addItems};
+                callApi(`users/${id}`, 'PUT', data)
+                    .then(res => {
+                        toast('success', 'Phân quyền thành công')
+                        this.props.eventEdit(id, res.data.roles.map(r => ({displayName:r.displayName})));
+                        this.setState({selectedRoles:res.data.roles});
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        toast('error', 'Phân quyền thất bại')
+                    });
+            }
+        } else {
+            this.forceUpdate();
+            this.validator.showMessages();
         }
-        // if (this.validator.allValid()) {
-        //     console.log(this.state.role)
-        // } else {
-        //     this.forceUpdate();
-        //     this.validator.showMessages();
-        // }
     }
 
 
