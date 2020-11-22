@@ -51,7 +51,7 @@ class UserForm extends Component{
                 callApi(`users/${id}`, 'PUT', data)
                     .then(res => {
                         toast('success', 'Phân quyền thành công')
-                        this.props.eventEdit(id, res.data.roles.map(r => ({displayName:r.displayName})));
+                        this.props.eventEdit(id, res.data.roles);
                         this.setState({selectedRoles:res.data.roles});
                     })
                     .catch(error => {

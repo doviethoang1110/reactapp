@@ -27,7 +27,8 @@ const Users = (props) => {
     }
 
     const update = (id, data) => {
-        users[users.indexOf(users.find(u => u.id === id))].roles = data;
+        users[users.indexOf(users.find(u => u.id === id))].roles = data.map(d => ({displayName:d.displayName}));
+        setSelectedRoles(data);
         setUsers([...users]);
     }
 
