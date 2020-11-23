@@ -4,6 +4,7 @@ import {actionToggleLoading} from "../../actions/loading";
 import {toast} from "../../utils/alert";
 import {IMAGE_URL} from "../../constants/config";
 import SimpleReactValidator from "simple-react-validator";
+import {toastRoles} from "../../utils/helpers";
 
 class BrandForm extends Component{
     constructor(props) {
@@ -61,22 +62,19 @@ class BrandForm extends Component{
         }
         if(this.validator.allValid()) {
             store.dispatch(actionToggleLoading(true));
-            setTimeout(() => {
-                this.props.submitHandle(this.props.brand.id,data)
-                    .then(response => {
-                        this.props.brand.id ? this.props.eventEdit(response.id) : this.refreshForm();
-                        store.dispatch(actionToggleLoading(false))
-                        for(let a of document.getElementsByClassName('errorMsg')) a.innerText = '';
-                        toast('success',response.message)
-                    })
-                    .catch(error => {
-                        store.dispatch(actionToggleLoading(false));
-                        console.log(error)
-                        for(let e in error) {
-                            document.getElementById('err_'+e).innerText = error[e];
-                        }
-                    });
-            },1000);
+            this.props.submitHandle(this.props.brand.id,data)
+                .then(response => {
+                    this.props.brand.id ? this.props.eventEdit(response.id) : this.refreshForm();
+                    store.dispatch(actionToggleLoading(false))
+                    for(let a of document.getElementsByClassName('errorMsg')) a.innerText = '';
+                    toast('success',response.message)
+                })
+                .catch(error => {
+                    console.log(error)
+                    store.dispatch(actionToggleLoading(false));
+                    if(error.response.status !== 403) for(let e in error.response.data) document.getElementById('err_'+e).innerText = error.response.data[e];
+                    toastRoles(error)
+                });
         } else {
             this.forceUpdate();
             this.validator.showMessages();

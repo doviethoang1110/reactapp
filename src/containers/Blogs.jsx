@@ -8,6 +8,11 @@ import Pagination from "../components/Pagination";
 import {toast} from "../utils/alert";
 import Blog from "../models/Blog";
 import BlogRestore from "../components/blog/BlogRestore";
+import {getDatas, toastRoles} from "../utils/helpers";
+import { connect } from "react-redux";
+import {actionToggleGrant} from "../actions/grant";
+
+const permission = 'TEST';
 
 const Blogs = (props) => {
     // state hook
@@ -28,16 +33,18 @@ const Blogs = (props) => {
         setIsForm(true);
     }
 
-    const refresh = () => {
-        getBlogs()
-    }
+    const refresh = () => getDatas('blogs', setBlogs)
 
     const getRestore = () => {
-        setIsRestore(true);
-        if(!blogRestore.length)
-            callApi('blogs/restore')
-                .then(res => setBlogRestore(res.data))
-                .catch(error => console.log(error))
+        callApi('blogs/restore')
+            .then(res => {
+                setIsRestore(true);
+                setBlogRestore(res.data);
+            })
+            .catch(error => {
+                toast('error', error);
+                toastRoles(error)
+            })
     }
 
     const restore = (id) => {
@@ -51,7 +58,8 @@ const Blogs = (props) => {
             })
             .catch(error => {
                 console.log(error)
-                toast('error',error.response.data)
+                toastRoles(error)
+                toast('error',error)
             });
     }
 
@@ -63,7 +71,8 @@ const Blogs = (props) => {
                 toast('success','Delete successfully');
             })
             .catch(error => {
-                toast('error',error.response.data);
+                toastRoles(error)
+                toast('error',error);
             })
     }
 
@@ -88,18 +97,16 @@ const Blogs = (props) => {
 
     const edit = (id) => {
         store.dispatch(actionToggleLoading(true))
-        setTimeout(() => {
-            setIsForm(true);
-            callApi(`blogs/${id}`)
-                .then(res => {
-                    store.dispatch(actionToggleLoading(false))
-                    setBlog(res.data);
-                })
-                .catch(error => {
-                    store.dispatch(actionToggleLoading(false))
-                    toast('error',error.response.data);
-                })
-        },0)
+        setIsForm(true);
+        callApi(`blogs/${id}`)
+            .then(res => {
+                store.dispatch(actionToggleLoading(false))
+                setBlog(res.data);
+            })
+            .catch(error => {
+                store.dispatch(actionToggleLoading(false))
+                toast('error',error);
+            })
     }
 
     const update = (id,data) => {
@@ -118,90 +125,106 @@ const Blogs = (props) => {
                 .catch(error => {
                     console.log(error);
                     toast('error','Delete failure');
+                    toastRoles(error)
                 })
         }
     }
 
-    useEffect((props) => {
-        getBlogs();
-    },[]);
-
-    const getBlogs = () => {
-        store.dispatch(actionToggleLoading(true))
-        setTimeout(() => {
-            callApi('blogs')
-                .then(res => {
-                    store.dispatch(actionToggleLoading(false))
-                    setBlogs(res.data)
-                })
-                .catch(error => {
-                    store.dispatch(actionToggleLoading(false))
-                    console.log(error)
-                });
-        },1500)
+    const fetchDatas = () => {
+        if(props.roles.some(r => permission === r)) {
+            props.toggle(true)
+            getDatas('blogs', setBlogs);
+        }else props.toggle(false)
     }
 
+    useEffect((props) => {
+        fetchDatas();
+    },[]);
+
     return (
-        <div className="row">
-            <div className="col-md-12">
-                <div className="card-header">
-                    {!blog.id && (
-                        <button onClick={add} className="btn btn-success card-title">
-                            <i className="fa fa-plus"></i> Add new
-                        </button>
-                    )}
-                    <button onClick={refresh} className="ml-2 btn btn-outline-primary card-title">
-                        <i className="fas fa-sync"></i> Refresh
-                    </button>
-                    <button onClick={getRestore} className="ml-2 btn btn-outline-warning card-title">
-                        <i className="fa fa-trash-restore"></i> Restore
-                    </button>
-                    {(isRestore || isForm) && (
-                        <button onClick={back} className="ml-2 btn btn-outline-dark card-title">
-                            <i className="fa fa-backward"></i> Back
-                        </button>
-                    )}
-                    <div className="card-tools">
-                        <div className="input-group input-group-sm" style={{ width: "150px" }}>
-                            <input type="text" name="table_search" className="form-control float-right" placeholder="Search" />
-                            <div className="input-group-append">
-                                <button type="submit" className="btn btn-default">
-                                    <i className="fas fa-search" />
+        <React.Fragment>
+            {!props.grant ? (
+                <div className='jumbotron'><h2>Bạn không có quyền</h2></div>
+            ) : (
+                <div className="row">
+                    <div className="col-md-12">
+                        <div className="card-header">
+                            {!blog.id && (
+                                <button onClick={add} className="btn btn-success card-title">
+                                    <i className="fa fa-plus"></i> Add new
                                 </button>
+                            )}
+                            <button onClick={refresh} className="ml-2 btn btn-outline-primary card-title">
+                                <i className="fas fa-sync"></i> Refresh
+                            </button>
+                            <button onClick={getRestore} className="ml-2 btn btn-outline-warning card-title">
+                                <i className="fa fa-trash-restore"></i> Restore
+                            </button>
+                            {(isRestore || isForm) && (
+                                <button onClick={back} className="ml-2 btn btn-outline-dark card-title">
+                                    <i className="fa fa-backward"></i> Back
+                                </button>
+                            )}
+                            <div className="card-tools">
+                                <div className="input-group input-group-sm" style={{ width: "150px" }}>
+                                    <input type="text" name="table_search" className="form-control float-right" placeholder="Search" />
+                                    <div className="input-group-append">
+                                        <button type="submit" className="btn btn-default">
+                                            <i className="fas fa-search" />
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        {/* /.card */}
+                    </div>
+                    <div className={`card-body ${isForm ? 'table-responsive p-0' : ''} col-md-12`}>
+                        {
+                            (isForm &&
+                                (
+                                    <BlogForm eventAdd={create} item={blog} eventEdit={update}/>
+                                )
+                            )
+                            ||
+                            (isRestore &&
+                                (
+                                    <BlogRestore items={blogRestore} eventRestore={restore} eventHardRemove={hardRemove}/>
+                                )
+                            )
+                            ||
+                            (
+                                <React.Fragment>
+                                    <BlogList items={currentItems} eventEdit={edit} eventRemove={remove}/>
+                                    <Pagination
+                                        itemsPerPage={itemsPerPage}
+                                        totalItems={blogs}
+                                        currentPage={currentPage}
+                                        changePage={paginate}
+                                    />
+                                </React.Fragment>
+                            )
+                        }
                     </div>
                 </div>
-                {/* /.card */}
-            </div>
-            <div className={`card-body ${isForm ? 'table-responsive p-0' : ''} col-md-12`}>
-                {
-                    (isForm &&
-                        (
-                            <BlogForm eventAdd={create} item={blog} eventEdit={update}/>
-                        )
-                    )
-                    ||
-                    (isRestore &&
-                        (
-                            <BlogRestore items={blogRestore} eventRestore={restore} eventHardRemove={hardRemove}/>
-                        )
-                    )
-                    ||
-                    (
-                        <React.Fragment>
-                            <BlogList items={currentItems} eventEdit={edit} eventRemove={remove}/>
-                            <Pagination
-                                itemsPerPage={itemsPerPage}
-                                totalItems={blogs}
-                                currentPage={currentPage}
-                                changePage={paginate}
-                            />
-                        </React.Fragment>
-                    )
-                }
-            </div>
-        </div>
+            )}
+        </React.Fragment>
     );
 }
-export default Blogs;
+
+// redux map
+const mapStateToProps = (state) => {
+    return {
+        roles: state.auth.user.roles,
+        grant: state.grant
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        toggle:(grant) => {
+            dispatch(actionToggleGrant(grant))
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Blogs);

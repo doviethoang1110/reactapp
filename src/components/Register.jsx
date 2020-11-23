@@ -30,13 +30,13 @@ class Register extends Component{
     submitForm = (e) => {
         e.preventDefault();
         const data = this.state.user;
-        callApi('users/register', 'POST', data)
+        callApi('auth/register', 'POST', data)
             .then(res => {
                 for(let a of document.getElementsByClassName('errMsg')) a.innerText = '';
                 Swal.fire({
                     text: res.data.message,
                     icon: res.data.icon
-                }).then(()=>{window.location.href = "http://localhost:3000/login"});
+                }).then(()=>{this.props.history.push("/login")});
             }).catch(error => {
             toast('error', 'Đăng ký thất bại');
             for(let e in error.response.data) document.getElementById('err_'+e).innerText = error.response.data[e];

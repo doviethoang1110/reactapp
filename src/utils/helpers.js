@@ -3,6 +3,8 @@ import store from "../store";
 import {actionToggleLoading} from "../actions/loading";
 import callApi from "./api";
 import {toast} from "./alert";
+import Cookie from "universal-cookie";
+import {decode } from "jsonwebtoken"
 
 export const getCategories = (datas,id = 0) => {
     let categories = datas.filter(category => category.parentId === id);
@@ -54,17 +56,15 @@ export const resetState = (options,index,val ='') => {
 
 export const getDatas = (url,callback) => {
     store.dispatch(actionToggleLoading(true))
-    setTimeout(() => {
-        callApi(url)
-            .then(res => {
-                store.dispatch(actionToggleLoading(false))
-                callback(res.data);
-            })
-            .catch(error => {
-                store.dispatch(actionToggleLoading(false))
-                console.log(error)
-            });
-    },1500)
+    callApi(url)
+        .then(res => {
+            store.dispatch(actionToggleLoading(false))
+            callback(res.data);
+        })
+        .catch(error => {
+            store.dispatch(actionToggleLoading(false))
+            console.log(error)
+        });
 }
 
 export const save = ({url, id, data, eventEdit, eventAdd}, method) => {
@@ -81,8 +81,11 @@ export const save = ({url, id, data, eventEdit, eventAdd}, method) => {
         .catch(error => {
             console.log(error)
             store.dispatch(actionToggleLoading(false))
-            for(let e in error.response.data) document.getElementById('err_'+e).innerText = error.response.data[e];
-            toast('error',`${id ? 'Updated': 'Added'} failure`)
+            if(error.response.status !== 403) {
+                for(let e in error.response.data) document.getElementById('err_'+e).innerText = error.response.data[e];
+                toast('error',`${id ? 'Updated': 'Added'} failure`)
+            }
+            return Promise.reject(error)
         })
 }
 
@@ -97,4 +100,18 @@ export const modify = (url) => {
             store.dispatch(actionToggleLoading(false))
             toast('error',error.response.data);
         })
+}
+
+export const authHeader = () => {
+    const cookie = new Cookie();
+    const token = cookie.get("token");
+    if (token) return { Authorization: 'Bearer ' + token }
+    else return {};
+}
+
+export const toastRoles = (error) => {
+    if(error.response.status === 403) {
+        toast('error', error.response.data.message);
+        return;
+    }
 }

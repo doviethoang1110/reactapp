@@ -111,7 +111,7 @@ class ProductFormEdit extends Component {
             for (let d of Object.keys(edit)) {
                 data.append(d,edit[d]);
             }
-            callApi('products/edit','POST',data,'multipart/form-data')
+            callApi('products/edit','POST',data)
                 .then(res => {
                     toast('success','Cập nhật thành công')
                     let categories = res.data.categories.map(c => c.id);

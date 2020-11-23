@@ -3,6 +3,7 @@ import SimpleReactValidator from "simple-react-validator";
 import { Multiselect } from 'multiselect-react-dropdown';
 import callApi from "../../utils/api";
 import {toast} from "../../utils/alert";
+import {toastRoles} from "../../utils/helpers";
 
 class UserForm extends Component{
     constructor(props) {
@@ -57,6 +58,7 @@ class UserForm extends Component{
                     .catch(error => {
                         console.log(error)
                         toast('error', 'Phân quyền thất bại')
+                        toastRoles(error)
                     });
             }
         } else {

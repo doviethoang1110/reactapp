@@ -3,6 +3,7 @@ import { toast } from '../../utils/alert';
 import {actionToggleLoading} from "../../actions/loading";
 import store from '../../store';
 import SimpleReactValidator from "simple-react-validator";
+import {toastRoles} from "../../utils/helpers";
 
 class CategoryForm extends Component {
     constructor(props) {
@@ -41,21 +42,19 @@ class CategoryForm extends Component {
         let {name,parentId,status} = this.state;
         if (this.validator.allValid()) {
             store.dispatch(actionToggleLoading(true))
-            setTimeout(() => {
-                this.props.submitHandle(this.props.category.id,{name,parentId,status})
-                    .then(response => {
-                        if(this.props.category.id) this.props.eventEdit(response.id);
-                        store.dispatch(actionToggleLoading(false));
-                        for(let a of document.getElementsByClassName('errorMsg')) a.innerText = '';
-                        toast('success',response.message)
-                    })
-                    .catch(error => {
-                        store.dispatch(actionToggleLoading(false));
-                        console.log(error)
-                        for(let e in error)
-                            document.getElementById('err_'+e).innerText = error[e];
-                    });
-            },1000);
+            this.props.submitHandle(this.props.category.id,{name,parentId,status})
+                .then(response => {
+                    if(this.props.category.id) this.props.eventEdit(response.id);
+                    store.dispatch(actionToggleLoading(false));
+                    for(let a of document.getElementsByClassName('errorMsg')) a.innerText = '';
+                    toast('success',response.message)
+                })
+                .catch(error => {
+                    store.dispatch(actionToggleLoading(false));
+                    console.log(error)
+                    if(error.response.status !== 403) for(let e in error) document.getElementById('err_'+e).innerText = error[e];
+                    toastRoles(error)
+                });
         } else {
             this.forceUpdate();
             this.validator.showMessages();

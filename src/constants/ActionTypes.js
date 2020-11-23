@@ -18,3 +18,6 @@ export const TOGGLE_LOADING = 'TOGGLE_LOADING';
 // authentication
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+
+// granted
+export const TOGGLE_GRANT = 'TOGGLE_GRANT';

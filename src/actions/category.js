@@ -8,13 +8,18 @@ import callApi from "../utils/api";
 
 export const actionGetCategories = () => {
     return (dispatch) => {
-        callApi('categories')
+        return callApi('categories')
             .then(response => {
                 dispatch({
                     type: GET_CATEGORIES,
                     categories: response.data
                 })
+            }).catch((error => {
+            dispatch({
+                type: 'FAILURE'
             });
+            return Promise.reject(error);
+        }));
     }
 };
 
@@ -32,7 +37,7 @@ export const actionStoreCategory = (category) => {
                 dispatch({
                     type: 'FAILURE'
                 });
-                return Promise.reject(error.response.data);
+                return Promise.reject(error);
             });
     }
 }
@@ -53,7 +58,7 @@ export const actionUpdateCategory = (id,category) => {
                 dispatch({
                     type: 'FAILURE'
                 });
-                return Promise.reject(error.response.data);
+                return Promise.reject(error);
             });
     }
 }
@@ -72,7 +77,7 @@ export const actionDeleteCategory = (id) => {
                 dispatch({
                     type: 'FAILURE'
                 });
-                return Promise.reject(error.response.data);
+                return Promise.reject(error);
             });
     }
 }
@@ -91,7 +96,7 @@ export const actionRestoreCategory = (id) => {
                 dispatch({
                     type: 'FAILURE'
                 });
-                return Promise.reject(error.response.data);
+                return Promise.reject(error);
             });
     }
 }

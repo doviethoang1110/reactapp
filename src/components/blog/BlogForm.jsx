@@ -7,6 +7,7 @@ import SimpleReactValidator from "simple-react-validator";
 import {Editor} from "@tinymce/tinymce-react";
 import Blog from "../../models/Blog";
 import callApi from "../../utils/api";
+import {toastRoles} from "../../utils/helpers";
 
 class BlogForm extends Component{
     constructor(props) {
@@ -78,28 +79,28 @@ class BlogForm extends Component{
             const data = new FormData();
             for (let d in blog) data.append(d,blog[d]);
             store.dispatch(actionToggleLoading(true))
-            callApi(`blogs${blog.id ? '/'+blog.id : ''}`,'POST',data,'multipart/form-data')
+            callApi(`blogs${blog.id ? '/'+blog.id : ''}`,'POST',data)
                 .then(response => {
                     const res = response.data;
-                    setTimeout(() => {
-                        store.dispatch(actionToggleLoading(false))
-                        for(let a of document.getElementsByClassName('errorMsg')) a.innerText = '';
-                        const id = blog.id;
-                        id ? this.props.eventEdit(id,res) : this.props.eventAdd(res);
-                        this.setState({
-                            blog: id ? res :new Blog('','<p>Đây là mô tả</p>',false,null),
-                            image_name: id ? res.image : '',
-                            url: null
-                        })
-                        toast('success', `${blog.id ? 'Updated': 'Added'} successfully`)
-                    },1500)
+                    store.dispatch(actionToggleLoading(false))
+                    for(let a of document.getElementsByClassName('errorMsg')) a.innerText = '';
+                    const id = blog.id;
+                    id ? this.props.eventEdit(id,res) : this.props.eventAdd(res);
+                    this.setState({
+                        blog: id ? res :new Blog('','<p>Đây là mô tả</p>',false,null),
+                        image_name: id ? res.image : '',
+                        url: null
+                    })
+                    toast('success', `${blog.id ? 'Updated': 'Added'} successfully`)
                 })
                 .catch(error => {
+                    console.log(error)
                     store.dispatch(actionToggleLoading(false))
-                    for(let e in error.response.data) {
-                        document.getElementById('err_'+e).innerText = error.response.data[e];
+                    toastRoles(error)
+                    if(error.response.status !== 403) {
+                        for(let e in error.response.data) document.getElementById('err_'+e).innerText = error.response.data[e];
+                        toast('error','Add failure');
                     }
-                    toast('error','Add failure')
                 })
         } else {
             this.forceUpdate();

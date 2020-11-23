@@ -9,7 +9,6 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import {actionLogin, actionLogout} from "./actions/auth";
 
-
 class App extends Component{
 
     renderContent = (routes) => {
@@ -62,6 +61,7 @@ class App extends Component{
                             </div>
                             <section className="content">
                                 <div className="container-fluid">
+                                    <Redirect from="/" to="/dashboard" exact/>
                                     <Switch>
                                         <Route path={["/login","/register"]} exact>
                                             {isLogin && <Redirect exact to="/dashboard" />}

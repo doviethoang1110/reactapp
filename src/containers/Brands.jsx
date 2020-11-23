@@ -15,6 +15,10 @@ import Pagination from "../components/Pagination";
 import {toast} from "../utils/alert";
 import BrandRestore from "../components/brand/BrandRestore";
 import callApi from "../utils/api";
+import {actionToggleGrant} from "../actions/grant";
+import {toastRoles} from "../utils/helpers";
+
+const permission = 'READ_BRAND';
 
 class Brands extends Component {
     constructor(props) {
@@ -29,7 +33,10 @@ class Brands extends Component {
         }
     }
     componentDidMount() {
-        this.props.getAllBrands();
+        if(this.props.roles.some(r => permission === r)) {
+            this.props.toggle(true)
+            this.props.getAllBrands();
+        }else this.props.toggle(false)
     }
     addBrand = () => {
         this.setState({
@@ -49,7 +56,11 @@ class Brands extends Component {
         if(window.confirm('Bạn có chắc không'))
             this.props.removeBrand(id)
             .then(res => toast('success',res))
-            .catch(error => toast('error',error));
+            .catch(error => {
+                console.log(error)
+                toast('error', error);
+                toastRoles(error)
+            });
         else return;
     }
 
@@ -62,7 +73,8 @@ class Brands extends Component {
                 this.setState({isRestore: status,brandRestore:res.data});
             })
             .catch(error => {
-                console.log(error)
+                toast('error', error);
+                toastRoles(error)
             })
     }
     hardRemove = (id) => {
@@ -90,7 +102,10 @@ class Brands extends Component {
                 this.setState({brandRestore:brands});
                 toast('success',res);
             })
-            .catch(error => toast('error',error));
+            .catch(error => {
+                toastRoles(error)
+                toast('error', error);
+            });
     }
     remove = (id) => {
         if(window.confirm('Bạn có chắc không')) this.hardRemove(id);
@@ -111,102 +126,111 @@ class Brands extends Component {
 
     render() {
         let { brand, itemsPerPage, currentPage, isRestore, brandRestore } = this.state;
-        let { brands } = this.props;
+        let { brands, grant } = this.props;
         let lastItem = currentPage * itemsPerPage;
         let firstItem = lastItem - itemsPerPage;
         let currentItems = brands.slice(firstItem,lastItem);
         return (
-            <div className="row">
-                <div className="col-md-12">
-                    <div className="card-header">
-                        <button className="btn btn-success card-title" onClick={this.addBrand}>
-                            <i className="fa fa-plus"></i> Add new
-                        </button>
-                        <button onClick={this.refresh} className="ml-2 btn btn-outline-primary card-title">
-                            <i className="fas fa-sync"></i> Refresh
-                        </button>
-                        <button onClick={(e) => this.restore(e,true)} className="ml-2 btn btn-outline-warning card-title">
-                            <i className="fa fa-trash-restore"></i> Restore
-                        </button>
-                        {isRestore && (
-                            <button onClick={(e) => this.restore(e,false)} className="ml-2 btn btn-outline-dark card-title">
-                                <i className="fa fa-backward"></i> Back
-                            </button>
-                        )}
-                        <div className="card-tools">
-                            <div className="input-group input-group-sm" style={{ width: "150px" }}>
-                                <input type="text" name="table_search" className="form-control float-right" placeholder="Search" />
-                                <div className="input-group-append">
-                                    <button type="submit" className="btn btn-default">
-                                        <i className="fas fa-search" />
+            <React.Fragment>
+                {!grant ? (
+                    <div className='jumbotron'><h2>Bạn không có quyền</h2></div>
+                ) : (
+                    <div className="row">
+                        <div className="col-md-12">
+                            <div className="card-header">
+                                <button className="btn btn-success card-title" onClick={this.addBrand}>
+                                    <i className="fa fa-plus"></i> Add new
+                                </button>
+                                <button onClick={this.refresh} className="ml-2 btn btn-outline-primary card-title">
+                                    <i className="fas fa-sync"></i> Refresh
+                                </button>
+                                <button onClick={(e) => this.restore(e,true)} className="ml-2 btn btn-outline-warning card-title">
+                                    <i className="fa fa-trash-restore"></i> Restore
+                                </button>
+                                {isRestore && (
+                                    <button onClick={(e) => this.restore(e,false)} className="ml-2 btn btn-outline-dark card-title">
+                                        <i className="fa fa-backward"></i> Back
                                     </button>
+                                )}
+                                <div className="card-tools">
+                                    <div className="input-group input-group-sm" style={{ width: "150px" }}>
+                                        <input type="text" name="table_search" className="form-control float-right" placeholder="Search" />
+                                        <div className="input-group-append">
+                                            <button type="submit" className="btn btn-default">
+                                                <i className="fas fa-search" />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            {/* /.card */}
                         </div>
+                        <div className={`card-body table-responsive p-0 ${this.state.isOpened ? 'col-md-7' : 'col-md-12'}`}>
+                            {isRestore ? (<BrandRestore
+                                    eventRestore={this.restoreBrand}
+                                    eventHardRemove={this.remove}
+                                    items={brandRestore}/>)
+                                : (
+                                    <React.Fragment>
+                                        <BrandList items={currentItems}
+                                                   eventEdit={this.editBrand}
+                                                   eventRemove={this.removeBrand}
+                                        />
+                                        <Pagination
+                                            itemsPerPage={itemsPerPage}
+                                            totalItems={brands}
+                                            currentPage={currentPage}
+                                            changePage={this.paginate}
+                                        >
+                                        </Pagination>
+                                    </React.Fragment>
+                                )}
+                        </div>
+                        {/* /.card-body */}
+                        {this.state.isOpened ? (
+                            <div className='col-md-5 card-body'>
+                                <BrandForm
+                                    closeForm={this.closeForm}
+                                    eventEdit={this.editBrand}
+                                    brand={brand}
+                                    submitHandle={this.props.storeBrand}
+                                />
+                            </div>
+                        ) : null}
                     </div>
-                    {/* /.card */}
-                </div>
-                <div className={`card-body table-responsive p-0 ${this.state.isOpened ? 'col-md-7' : 'col-md-12'}`}>
-                    {isRestore ? (<BrandRestore
-                        eventRestore={this.restoreBrand}
-                        eventHardRemove={this.remove}
-                        items={brandRestore}/>)
-                        : (
-                        <React.Fragment>
-                            <BrandList items={currentItems}
-                                       eventEdit={this.editBrand}
-                                       eventRemove={this.removeBrand}
-                            />
-                            <Pagination
-                                itemsPerPage={itemsPerPage}
-                                totalItems={brands}
-                                currentPage={currentPage}
-                                changePage={this.paginate}
-                            >
-                            </Pagination>
-                        </React.Fragment>
-                    )}
-                </div>
-                {/* /.card-body */}
-                {this.state.isOpened ? (
-                    <div className='col-md-5 card-body'>
-                        <BrandForm
-                            closeForm={this.closeForm}
-                            eventEdit={this.editBrand}
-                            brand={brand}
-                            submitHandle={this.props.storeBrand}
-                        />
-                    </div>
-                ) : null}
-            </div>
+                )}
+            </React.Fragment>
         );
     }
 }
+
+const func = (dispatch) => {
+    dispatch(actionToggleLoading(true))
+    return dispatch(actionGetBrands())
+        .then(() => dispatch(actionToggleLoading(false)))
+        .catch(error => {
+            dispatch(actionToggleLoading(false))
+            toast('error', error.response.data.message)
+        })
+}
+
 // Redux Map
 const mapStateToProps = (state) => {
     return {
         brands: state.brands,
+        roles: state.auth.user.roles,
+        grant: state.grant
     };
 };
 const mapDispatchToProps = (dispatch) => {
     return {
-        refresh:() => {
-            dispatch(actionToggleLoading(true))
-            setTimeout(() => {
-                dispatch(actionGetBrands());
-                dispatch(actionToggleLoading(false))
-            },1500);
+        refresh:() => func(dispatch),
+        toggle:(grant) => {
+            dispatch(actionToggleGrant(grant))
         },
         getAllBrands: () => {
-            if(store.getState().brands.length) {
-                return;
-            }else {
-                dispatch(actionToggleLoading(true))
-                setTimeout(() => {
-                    dispatch(actionGetBrands());
-                    dispatch(actionToggleLoading(false))
-                },1500);
-            }
+            if(store.getState().brands.length) return;
+            else func(dispatch);
         },
         storeBrand: (id,data) => {
             return dispatch(id ? actionUpdateBrand(id,data) : actionStoreBrand(data));

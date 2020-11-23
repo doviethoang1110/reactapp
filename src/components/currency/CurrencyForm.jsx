@@ -1,7 +1,7 @@
 import React,{Component} from "react";
 import SimpleReactValidator from "simple-react-validator";
 import Currency from "../../models/Currency";
-import {save} from "../../utils/helpers";
+import {save, toastRoles} from "../../utils/helpers";
 
 class CurrencyForm extends Component{
     constructor(props) {
@@ -60,7 +60,10 @@ class CurrencyForm extends Component{
                 eventEdit: this.props.eventEdit},currency.id ? 'PUT' : 'POST')
                 .then(res => {
                     this.setState({currency: currency.id ? res : new Currency('','',1)})
-                });
+                }).catch(error => {
+                    toastRoles(error)
+                    this.setState({currency: this.state.currency});
+            });
         } else {
             this.forceUpdate();
             this.validator.showMessages();

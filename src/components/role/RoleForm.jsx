@@ -3,7 +3,7 @@ import SimpleReactValidator from "simple-react-validator";
 import Role from "../../models/Role";
 import { Multiselect } from 'multiselect-react-dropdown';
 import callApi from "../../utils/api";
-import {save} from "../../utils/helpers";
+import {save, toastRoles} from "../../utils/helpers";
 
 class RoleForm extends Component{
     constructor(props) {
@@ -59,6 +59,10 @@ class RoleForm extends Component{
             },id ? 'PUT' : 'POST').then((res) => {
                 if(!id) this.multiselectRef.current.resetSelectedValues();
                 this.setState({role: id ? res : new Role('','',[])})
+            }).catch(error => {
+                if(!id) this.multiselectRef.current.resetSelectedValues();
+                this.setState({role: id ? this.props.item : new Role('','',[])})
+                toastRoles(error)
             })
         } else {
             this.forceUpdate();

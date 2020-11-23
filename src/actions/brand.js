@@ -9,19 +9,25 @@ import {
 
 export const actionGetBrands = () => {
     return (dispatch) => {
-         callApi('brands')
+         return callApi('brands')
             .then(response => {
                 dispatch({
                     type: GET_BRANDS,
                     brands: response.data
-                })
-            });
+                });
+                return Promise.resolve();
+            }).catch((error => {
+                 dispatch({
+                     type: 'FAILURE'
+                 });
+                 return Promise.reject(error);
+             }));
     }
 };
 
 export const actionStoreBrand = (brand) => {
     return (dispatch) => {
-        return callApi('brands', 'POST', brand,'multipart/form-data')
+        return callApi('brands', 'POST', brand)
             .then(response => {
                 dispatch({
                     type: ADD_BRAND_SUCCESS,
@@ -33,7 +39,7 @@ export const actionStoreBrand = (brand) => {
                 dispatch({
                     type: 'FAILURE'
                 });
-                return Promise.reject(error.response.data);
+                return Promise.reject(error);
             });
     }
 }
@@ -53,7 +59,7 @@ export const actionUpdateBrand = (id,brand) => {
                 dispatch({
                     type: 'FAILURE'
                 });
-                return Promise.reject(error.response.data);
+                return Promise.reject(error);
             });
     }
 }
@@ -72,7 +78,7 @@ export const actionDeleteBrand = (id) => {
                 dispatch({
                     type: 'FAILURE'
                 });
-                return Promise.reject(error.response.data);
+                return Promise.reject(error);
             });
     }
 }
@@ -91,7 +97,7 @@ export const actionRestoreBrand = (id) => {
                 dispatch({
                     type: 'FAILURE'
                 });
-                return Promise.reject(error.response.data);
+                return Promise.reject(error);
             });
     }
 }

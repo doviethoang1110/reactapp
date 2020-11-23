@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import SimpleReactValidator from "simple-react-validator";
-import {NavLink, Redirect} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import {toast} from "../utils/alert";
 
 class Login extends Component{
@@ -26,25 +26,23 @@ class Login extends Component{
 
     submitForm = (e) => {
         e.preventDefault();
-        const data = this.state.user;
-        this.props.login(data)
-            .then(res => {
-                this.props.history.push("/dashboard");
-                toast('success', res)
-            }).catch(error => {
+        if (this.validator.allValid()) {
+            const data = this.state.user;
+            this.props.login(data)
+                .then(res => {
+                    this.props.history.push("/dashboard");
+                    toast('success', res)
+                }).catch(error => {
                 document.getElementById('errMsg').innerText = error;
             });
-        // if (this.validator.allValid()) {
-        //
-        // } else {
-        //     this.forceUpdate();
-        //     this.validator.showMessages();
-        // }
+        } else {
+            this.forceUpdate();
+            this.validator.showMessages();
+        }
     }
 
     render() {
         const { user } = this.state;
-        const { isLogin } = this.props;
         return (
             <React.Fragment>
                 <div className='login-page' style={{minHeight: '586.391px'}}>

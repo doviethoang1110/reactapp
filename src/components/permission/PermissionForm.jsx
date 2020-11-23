@@ -1,6 +1,6 @@
 import React,{Component} from "react";
 import SimpleReactValidator from "simple-react-validator";
-import {save} from "../../utils/helpers";
+import {save, toastRoles} from "../../utils/helpers";
 
 
 class PermissionForm extends Component{
@@ -54,11 +54,11 @@ class PermissionForm extends Component{
     handleSubmit = (e) => {
         e.preventDefault();
         if (this.validator.allValid()) {
-            if(!this.state.request.length) {
-                document.getElementById('errMsg').innerText = "Chọn tối thiểu 1";
-                return;
-            }
             const id = this.state.temp.id;
+            if(!id) if(!this.state.request.length) {
+                    document.getElementById('errMsg').innerText = "Chọn tối thiểu 1";
+                    return;
+                }
             save({
                 data: id ? this.state.temp : this.state.request,
                 id: id || null,
@@ -68,6 +68,9 @@ class PermissionForm extends Component{
             },id ? 'PUT' : 'POST').then((res) => {
                 document.getElementById("errMsg").innerText = "";
                 this.setState({temp: id ? res : {name: '', displayName: ''},request: []})
+            }).catch(error => {
+                toastRoles(error);
+                this.setState({temp: id ? this.state.temp : {name: '', displayName: ''},request: []})
             })
         } else {
             this.forceUpdate();
