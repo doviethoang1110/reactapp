@@ -52,6 +52,11 @@ const menus = [
         icon: 'fa fa-user',
         label: 'Phân quyền người dùng',
     },
+    {
+        path:'/coupons',
+        icon: 'fa fa-tags',
+        label: 'Mã giảm giá',
+    },
 ];
 
 class Aside extends Component {

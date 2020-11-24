@@ -3,28 +3,32 @@ import {calCurrentItems, getDatas, modify, toastRoles} from "../utils/helpers";
 import callApi from "../utils/api";
 import {toast} from "../utils/alert";
 import Pagination from "../components/Pagination";
-import PermissionRestore from "../components/permission/PermissionRestore";
-import RoleForm from "../components/role/RoleForm";
-import Role from "../models/Role";
-import RoleList from "../components/role/RoleList";
 import {actionToggleGrant} from "../actions/grant";
 import { connect } from "react-redux";
+import Coupon from "../models/Coupon";
+import CouponList from "../components/coupon/CouponList";
+import CouponForm from "../components/coupon/CouponForm";
+import CouponRestore from "../components/coupon/CouponRestore";
+import moment from "moment";
+import DeliverCoupon from "../components/coupon/DeliverCoupon";
 
-const permissions = ['ADMIN_MANAGER','READ_ROLE']
+const permissions = ['ADMIN_MANAGER','READ_COUPON'];
 
-const Roles = (props) => {
+const Coupons = (props) => {
     // state hook
-    const [roles, setRoles] = useState([]);
+    const [coupons, setCoupons] = useState([]);
     const [currentPage,setCurrentPage] = useState(1);
-    const [role, setRole] = useState(new Role('','',[]));
+    const [coupon, setCoupon] = useState(new Coupon('','',null,null,1,0));
     const [isRestore, setIsRestore] = useState(false);
     const [isForm, setIsForm] = useState(false);
-    const [roleRestore, setRoleRestore] = useState([]);
+    const [isDeliver, setIsDeliver] = useState(false);
+    const [couponRestore, setCouponRestore] = useState([]);
+    const [customers, setCustomers] = useState([]);
 
     const fetchDatas = () => {
         if(props.roles.some(r => permissions.includes(r))) {
             props.toggle(true)
-            getDatas('roles', setRoles);
+            getDatas('coupons', setCoupons);
         }else props.toggle(false)
     }
 
@@ -34,53 +38,68 @@ const Roles = (props) => {
 
     // method
     const back = () => {
-        if(role.id) setRole(role)
+        if(coupon.id) setCoupon(coupon)
         if(isForm) setIsForm(false);
         if(isRestore) setIsRestore(false);
+        if(isDeliver) setIsDeliver(false);
     }
 
     const getRestore = () => {
-        callApi('roles/restore')
+        callApi('coupons/restore')
             .then(res => {
                 setIsRestore(true);
-                setRoleRestore(res.data);
+                setCouponRestore(res.data);
             }).catch(error => {
-            toastRoles(error)
-        })
+                toastRoles(error)
+            })
+    }
+
+    const deliver = () => {
+        callApi('coupons/customers')
+            .then(res => {
+                setIsDeliver(true);
+                setCustomers(res.data);
+            }).catch(error => {
+                console.log(error);
+                toastRoles(error)
+            })
     }
 
     const add = () => {
-        setRole(new Role('','',[]));
+        setCoupon(new Coupon('','',null,null,1,0));
         setIsForm(true);
     }
 
     const create = (data) => {
-        const results = [...roles];
+        console.log(data);
+        const results = [...coupons];
         results.push(data)
-        setRoles(results);
+        setCoupons(results);
     }
 
     const edit = (id) => {
-        modify(`roles/${id}`)
+        modify(`coupons/${id}`)
             .then(res => {
+                res.startDate = moment(new Date(res.startDate)).format('YYYY-MM-DDTHH:mm');
+                res.endDate = moment(new Date(res.endDate)).format('YYYY-MM-DDTHH:mm');
                 setIsForm(true);
-                setRole(res);
+                setCoupon(res);
             }).catch(error => console.log(error));
     }
 
     const update = (id, data) => {
-        roles[roles.indexOf(roles.find(p => p.id === id))] = data;
-        setRole(data);
-        setRoles([...roles]);
+        coupons[coupons.indexOf(coupons.find(p => p.id === id))] = data;
+        setCoupon(data);
+        setCoupons([...coupons]);
     }
 
     const restore = (id) => {
-        callApi(`roles/restore/${id}`, 'PATCH')
+        callApi(`coupons/restore/${id}`, 'PATCH')
             .then(response => {
-                roleRestore.splice(roleRestore.indexOf(roleRestore.find(b => b.id === id)),1);
-                roles.push(response.data);
-                setRoles([...roles]);
-                setRoleRestore([...roleRestore]);
+                couponRestore.splice(couponRestore.indexOf(couponRestore.find(b => b.id === id)),1);
+                coupons.push(response.data);
+                setCoupons([...coupons]);
+                setCouponRestore([...couponRestore]);
                 toast('success','Restore successfully');
             })
             .catch(error => {
@@ -92,10 +111,10 @@ const Roles = (props) => {
 
     const remove = (id) => {
         if(window.confirm('Bạn có chắc không')) {
-            callApi(`roles/${id}`,'PATCH')
+            callApi(`coupons/${id}`,'PATCH')
                 .then(() => {
-                    roles.splice(roles.indexOf(roles.find(b => b.id === id)),1)
-                    setRoles([...roles]);
+                    coupons.splice(coupons.indexOf(coupons.find(b => b.id === id)),1)
+                    setCoupons([...coupons]);
                     toast('success','Delete successfully');
                 })
                 .catch(error => {
@@ -130,7 +149,10 @@ const Roles = (props) => {
                             <button onClick={getRestore} className="ml-2 btn btn-outline-warning card-title">
                                 <i className="fa fa-trash-restore"></i> Restore
                             </button>
-                            {(isRestore || isForm) && (
+                            <button onClick={deliver} className="ml-2 btn btn-outline-info card-title">
+                                <i className="fa fa-trash-restore"></i> Deliver coupon
+                            </button>
+                            {(isRestore || isForm || isDeliver) && (
                                 <button onClick={back} className="ml-2 btn btn-outline-dark card-title">
                                     <i className="fa fa-backward"></i> Back
                                 </button>
@@ -152,22 +174,28 @@ const Roles = (props) => {
                         {
                             (isForm &&
                                 (
-                                    <RoleForm eventAdd={create} item={role} eventEdit={update}/>
+                                    <CouponForm eventAdd={create} item={coupon} eventEdit={update}/>
                                 )
                             )
                             ||
                             (isRestore &&
                                 (
-                                    <PermissionRestore items={roleRestore} eventRestore={restore}/>
+                                    <CouponRestore items={couponRestore} eventRestore={restore}/>
+                                )
+                            )
+                            ||
+                            (isDeliver &&
+                                (
+                                    <DeliverCoupon items={customers} coupons={coupons}/>
                                 )
                             )
                             ||
                             (
                                 <React.Fragment>
-                                    <RoleList items={calCurrentItems(currentPage, roles)} eventEdit={edit} eventRemove={remove}/>
+                                    <CouponList items={calCurrentItems(currentPage, coupons)} eventEdit={edit} eventRemove={remove}/>
                                     <Pagination
                                         itemsPerPage={4}
-                                        totalItems={roles}
+                                        totalItems={coupons}
                                         currentPage={currentPage}
                                         changePage={paginate}
                                     />
@@ -196,5 +224,5 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Roles);
+export default connect(mapStateToProps, mapDispatchToProps)(Coupons);
 

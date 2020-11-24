@@ -4,7 +4,6 @@ import {actionToggleLoading} from "../actions/loading";
 import callApi from "./api";
 import {toast} from "./alert";
 import Cookie from "universal-cookie";
-import {decode } from "jsonwebtoken"
 
 export const getCategories = (datas,id = 0) => {
     let categories = datas.filter(category => category.parentId === id);

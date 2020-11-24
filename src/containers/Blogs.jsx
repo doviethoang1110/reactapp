@@ -12,7 +12,7 @@ import {getDatas, toastRoles} from "../utils/helpers";
 import { connect } from "react-redux";
 import {actionToggleGrant} from "../actions/grant";
 
-const permission = 'TEST';
+const permissions = ['ADMIN_MANAGER','READ_BLOG'];
 
 const Blogs = (props) => {
     // state hook
@@ -131,7 +131,7 @@ const Blogs = (props) => {
     }
 
     const fetchDatas = () => {
-        if(props.roles.some(r => permission === r)) {
+        if(props.roles.some(r => permissions.includes(r))) {
             props.toggle(true)
             getDatas('blogs', setBlogs);
         }else props.toggle(false)

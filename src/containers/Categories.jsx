@@ -16,9 +16,8 @@ import callApi from "../utils/api";
 import {toast} from "../utils/alert";
 import CategoryRestore from "../components/category/CategoryRestore";
 import {actionToggleGrant} from "../actions/grant";
-import {actionGetBrands} from "../actions/brand";
 
-const permission = 'TEST';
+const permissions = ['ADMIN_MANAGER','READ_CATEGORY'];
 
 class Categories extends Component {
     constructor(props) {
@@ -31,8 +30,8 @@ class Categories extends Component {
         }
     }
     componentDidMount() {
-        if(this.props.roles.some(r => permission === r)) {
-            this.props.toggle(true)
+        if(this.props.roles.some(r => permissions.includes(r))) {
+            this.props.toggle(true);
             this.props.getAllCategories();
         }else this.props.toggle(false)
     }
