@@ -4,6 +4,7 @@ import {actionToggleLoading} from "../actions/loading";
 import callApi from "./api";
 import {toast} from "./alert";
 import Cookie from "universal-cookie";
+import moment from "moment";
 
 export const getCategories = (datas,id = 0) => {
     let categories = datas.filter(category => category.parentId === id);
@@ -113,4 +114,12 @@ export const toastRoles = (error) => {
         toast('error', error.response.data.message);
         return;
     }
+}
+
+export const formatMoney = (money, currency) => {
+    return new Intl.NumberFormat('en-US',{ style: 'currency', currency }).format(Math.round(money));
+}
+
+export const formatDate = (date) => {
+    return moment(date).format('DD-MMMM-YYYY');
 }

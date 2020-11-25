@@ -42,7 +42,7 @@ class App extends Component{
                     <div className="App">
                         {loading}
                         <Header name={user.name} logout={logout}/>
-                        <Aside/>
+                        <Aside name={user.name}/>
                         <div className="content-wrapper">
                             <div className="content-header">
                                 <div className="container-fluid">

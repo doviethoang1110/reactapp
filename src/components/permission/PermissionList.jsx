@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import {formatDate} from "../../utils/helpers";
 
 const PermissionList = (props) => {
 
@@ -17,7 +18,7 @@ const PermissionList = (props) => {
             <td>{item.id}</td>
             <td>{item.name}</td>
             <td>{item.displayName}</td>
-            <td>{moment(item.createdAt).format('DD-MMMM-YYYY')}</td>
+            <td>{formatDate(item.createdAt)}</td>
             <td>
                 <button onClick={(e) => edit(e,item.id)} type="button" className="mr-2 btn btn-outline-warning"><i className="fa fa-pen"></i></button>
                 <button onClick={(e) => remove(e,item.id)} type="button" className="btn btn-outline-danger"><i className="fa fa-trash"></i></button>

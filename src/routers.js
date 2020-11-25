@@ -12,6 +12,7 @@ import Permissions from "./containers/Permissions";
 import Roles from "./containers/Roles";
 import Users from "./containers/Users";
 import Coupons from "./containers/Coupons";
+import Orders from "./containers/Orders";
 
 const routes = [
     {
@@ -65,6 +66,10 @@ const routes = [
     {
         path: '/coupons',
         component: Coupons
+    },
+    {
+        path: '/orders',
+        component: Orders
     },
     {
         path: '',

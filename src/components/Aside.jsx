@@ -57,6 +57,11 @@ const menus = [
         icon: 'fa fa-tags',
         label: 'Mã giảm giá',
     },
+    {
+        path:'/orders',
+        icon: 'fa fa-shopping-bag',
+        label: 'Quản lý đơn hàng',
+    },
 ];
 
 class Aside extends Component {
@@ -87,7 +92,7 @@ class Aside extends Component {
                             <img src="/dist/img/user2-160x160.jpg" className="img-circle elevation-2" alt="" />
                         </div>
                         <div className="info">
-                            <a href="# " className="d-block">Alexander Pierce</a>
+                            <a href="# " className="d-block">{this.props.name}</a>
                         </div>
                     </div>
                     {/* Sidebar Menu */}
