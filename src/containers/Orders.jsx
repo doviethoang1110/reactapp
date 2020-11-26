@@ -5,6 +5,8 @@ import {actionToggleGrant} from "../actions/grant";
 import { connect } from "react-redux";
 import OrderList from "../components/order/OrderList";
 import OrderDetail from "../components/order/OrderDetail";
+import callApi from "../utils/api";
+import {toast} from "../utils/alert";
 
 const permissions = ['ADMIN_MANAGER','READ_ORDER'];
 
@@ -25,7 +27,7 @@ const Orders = (props) => {
             email: null
         },
         orderDetails: [],
-        orderStatus: {name:null},
+        orderStatus: {id: 1, name: ""},
         shippingStatus: {name:null},
         paymentStatus: {name: null},
         coupon: "",
@@ -60,6 +62,21 @@ const Orders = (props) => {
                 setId(id);
                 setOrder({...res});
             }).catch(error => console.log(error));
+    }
+
+    const updateStatus = (id, value) => {
+        callApi(`orders/${id}`, 'PATCH', {orderStatusId: value})
+            .then(res => {
+                orders[orders.indexOf(orders.find(o => o.id ===id))].orderStatus.name = res.data.orderStatus.name;
+                order.orderStatus.id = res.data.orderStatus.id;
+                order.paymentStatus.name = res.data.paymentStatus.name;
+                order.shippingStatus.name = res.data.shippingStatus.name;
+                setOrders([...orders]);
+                setOrder({...order});
+                toast('success', 'Cập nhật thành công');
+            }).catch(error => {
+                toast('error', error.response.data);
+            })
     }
 
     const update = (id, data) => {
@@ -108,7 +125,7 @@ const Orders = (props) => {
                         {
                             (id &&
                                 (
-                                    <OrderDetail item={order}/>
+                                    <OrderDetail item={order} eventEdit={updateStatus}/>
                                 )
                             )
                             ||

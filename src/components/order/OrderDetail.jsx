@@ -6,6 +6,10 @@ const OrderDetail = (props) => {
 
     const [orderStatus, setOrderStatus] = useState([]);
 
+    const updateStatus = (e, id) => {
+        props.eventEdit(id, +e.target.value);
+    }
+
     useEffect(() => {
         callApi('orders/select')
             .then(res => {
@@ -75,7 +79,8 @@ const OrderDetail = (props) => {
                                 <tr>
                                     <th>Order status</th>
                                     <td>
-                                        <select className="form-control">
+                                        <select className="form-control" value={props.item.orderStatus.id}
+                                                onChange={(e) => updateStatus(e,props.item.id)}>
                                             {orderStatus.length && orderStatus.map((o,index) => (
                                                 <option key={index} value={o.id}>{o.name}</option>
                                             ))}
