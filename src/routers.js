@@ -13,6 +13,7 @@ import Roles from "./containers/Roles";
 import Users from "./containers/Users";
 import Coupons from "./containers/Coupons";
 import Orders from "./containers/Orders";
+import Banners from "./containers/Banners";
 
 const routes = [
     {
@@ -66,6 +67,10 @@ const routes = [
     {
         path: '/coupons',
         component: Coupons
+    },
+    {
+        path: '/banners',
+        component: Banners
     },
     {
         path: '/orders',

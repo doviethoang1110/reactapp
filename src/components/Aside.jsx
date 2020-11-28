@@ -62,6 +62,11 @@ const menus = [
         icon: 'fa fa-shopping-bag',
         label: 'Quản lý đơn hàng',
     },
+    {
+        path:'/banners',
+        icon: 'fa fa-object-group',
+        label: 'Quản lý banner',
+    },
 ];
 
 class Aside extends Component {
