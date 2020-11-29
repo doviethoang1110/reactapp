@@ -8,64 +8,34 @@ const menus = [
         label: 'Trang chủ',
     },
     {
-        path:'/categories',
-        icon: 'fas fa-th',
-        label: 'Quản lý danh mục',
-    },
-    {
-        path:'/brands',
-        icon: 'fa fa-file-image',
-        label: 'Quản lý brand',
-    },
-    {
-        path:'/products',
-        icon: 'fa fa-shopping-cart',
         label: 'Quản lý sản phẩm',
+        icon: 'fa fa-shopping-cart',
+        child: [
+            {path:'/categories', icon: 'fas fa-th', label: 'Quản lý danh mục'},
+            {path:'/brands', icon: 'fa fa-file-image', label: 'Quản lý brand'},
+            {path:'/products', icon: 'fa fa-shopping-cart', label: 'Quản lý sản phẩm'},
+            {path:'/coupons', icon: 'fa fa-tags', label: 'Mã giảm giá'}
+        ]
     },
     {
-        path:'/blogs',
-        icon: 'fa fa-sticky-note',
-        label: 'Quản lý bài viết',
-    },
-    {
-        path:'/reviews',
-        icon: 'fa fa-pen',
-        label: 'Quản lý bình luận',
-    },
-    {
-        path:'/currencies',
-        icon: 'fas fa-dollar-sign',
-        label: 'Quản lý loại tiền',
-    },
-    {
-        path:'/permissions',
-        icon: 'fa fa-unlock',
-        label: 'Quản lý quyền',
-    },
-    {
-        path:'/roles',
-        icon: 'fa fa-child',
-        label: 'Quản lý vai trò',
-    },
-    {
-        path:'/users',
+        label: 'Quản lý hệ thống',
         icon: 'fa fa-user',
-        label: 'Phân quyền người dùng',
+        child: [
+            {path:'/permissions', icon: 'fa fa-unlock', label: 'Quản lý quyền'},
+            {path:'/roles',icon: 'fa fa-child', label: 'Quản lý vai trò'},
+            {path:'/users', icon: 'fa fa-user', label: 'Phân quyền người dùng'},
+            {path:'/currencies', icon: 'fas fa-dollar-sign', label: 'Quản lý loại tiền'}
+        ]
     },
     {
-        path:'/coupons',
-        icon: 'fa fa-tags',
-        label: 'Mã giảm giá',
-    },
-    {
-        path:'/orders',
-        icon: 'fa fa-shopping-bag',
-        label: 'Quản lý đơn hàng',
-    },
-    {
-        path:'/banners',
-        icon: 'fa fa-object-group',
-        label: 'Quản lý banner',
+        label: 'Quản lý website',
+        icon: 'fa fa fa-notes-medical',
+        child: [
+            {path:'/blogs', icon: 'fa fa-sticky-note', label: 'Quản lý bài viết'},
+            {path:'/reviews', icon: 'fa fa-pen', label: 'Quản lý bình luận'},
+            {path:'/orders', icon: 'fa fa-shopping-bag', label: 'Quản lý đơn hàng'},
+            {path:'/banners', icon: 'fa fa-object-group', label: 'Quản lý banner'}
+        ]
     },
 ];
 
@@ -75,7 +45,27 @@ class Aside extends Component {
         if(menus.length > 0) {
             result = menus.map((route,index) => {
                 return (
-                    <CustomLinks key={index} route={route.path} icon={route.icon}>{route.label}</CustomLinks>
+                    <React.Fragment key={index}>
+                        {(route.child) ? (
+                            <li className="nav-item has-treeview">
+                                <a href="#" className="nav-link">
+                                    <i className={`nav-icon ${route.icon}`}></i>
+                                    <p>{route.label}<i className="right fas fa-angle-left"></i></p>
+                                </a>
+                                <ul className="nav nav-treeview">
+                                    {route.child.map((r, i) => (
+                                        <li className="nav-item" key={i}>
+                                            <CustomLinks key={i} route={r.path} icon={r.icon}>{r.label}</CustomLinks>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </li>
+                        ) : (
+                            <li key={index} className="nav-item">
+                                <CustomLinks route={route.path} icon={route.icon}>{route.label}</CustomLinks>
+                            </li>
+                        )}
+                    </React.Fragment>
                 );
             })
         }
@@ -116,12 +106,10 @@ class Aside extends Component {
 class CustomLinks extends Component{
     render() {
         return (
-            <li className="nav-item">
-                <NavLink exact to={this.props.route} className="nav-link">
-                    <i className={`nav-icon ${ this.props.icon }`} />
-                    <p>{ this.props.children }</p>
-                </NavLink>
-            </li>
+            <NavLink exact to={this.props.route} className="nav-link">
+                <i className={`nav-icon ${ this.props.icon }`} />
+                <p>{ this.props.children }</p>
+            </NavLink>
         );
     }
 }
