@@ -106,18 +106,18 @@ class ProductFormEdit extends Component {
     submitForm = (e) => {
         e.preventDefault();
         if (this.validator.allValid()) {
-            let edit = this.state.edit;
-            let data = new FormData();
-            for (let d of Object.keys(edit)) {
-                data.append(d,edit[d]);
-            }
+            const edit = this.state.edit;
+            const data = new FormData();
+            for (let d of Object.keys(edit)) data.append(d,edit[d]);
             callApi('products/edit','POST',data)
                 .then(res => {
                     toast('success','Cập nhật thành công')
-                    let categories = res.data.categories.map(c => c.id);
-                    let brand = res.data.brand.id;
-                    let edit = {...res.data,categories,brand};
-                    this.setState({edit})
+                    const categories = res.data.categories.map(c => c.id);
+                    const brand = res.data.brand.id;
+                    const edit = {...res.data,categories,brand};
+                    const dom = document.getElementById('img_show');
+                    if(dom) dom.hidden = false;
+                    this.setState({edit,url :null, image_name: ''})
                 })
                 .catch(error => {
                     toast('error','Có lỗi xảy ra')
@@ -329,17 +329,13 @@ const mapDispatchToProps = (dispatch) => {
             let categories = store.getState().categories.length;
             if(!brands && !categories) {
                 dispatch(actionToggleLoading( true))
-                setTimeout(() => {
-                    dispatch(actionGetBrands());
-                    dispatch(actionGetCategories());
-                    dispatch(actionToggleLoading(false))
-                },2000);
+                dispatch(actionGetBrands());
+                dispatch(actionGetCategories());
+                dispatch(actionToggleLoading(false))
             }else if(!brands || !categories) {
                 dispatch(actionToggleLoading(true))
-                setTimeout( () => {
-                    dispatch(brands ? actionGetCategories() : actionGetBrands());
-                    dispatch(actionToggleLoading(false))
-                },2000);
+                dispatch(brands ? actionGetCategories() : actionGetBrands());
+                dispatch(actionToggleLoading(false))
             }else return;
         },
     }

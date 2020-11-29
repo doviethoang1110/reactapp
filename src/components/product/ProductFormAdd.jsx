@@ -14,7 +14,6 @@ import SimpleReactValidator from "simple-react-validator";
 import callApi from "../../utils/api";
 import { createBrowserHistory } from "history";
 import {toast} from "../../utils/alert";
-import {NavLink} from "react-router-dom";
 
 class ProductFormAdd extends Component {
     constructor(props) {
@@ -35,18 +34,29 @@ class ProductFormAdd extends Component {
             className: 'text-danger'
         });
     }
+
     componentDidMount() {
         this.props.getDatas();
+        if (this.props.item) {
+            this.setState({
+                product: this.props.item
+            })
+        }
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        this.setState({
+            product: nextProps.item
+        });
     }
 
     // Input options function
     addTag = (e,index) => {
         const val = e.target.value;
-
         if (e.key === 'Enter' && e.keyCode === 13 && val) {
             e.preventDefault();
             if (this.state.options[index].values.find(tag => tag.toLowerCase() === val.toLowerCase())) return;
-            let {options,skus} = resetState([...this.state.options],index,val);
+            const {options,skus} = resetState([...this.state.options],index,val);
             this.setState({options,skus});
             e.target.value = '';
         } else if (e.key === 'Backspace' && !val) this.removeTag(index,this.state.options[index].values.length - 1);
@@ -58,6 +68,7 @@ class ProductFormAdd extends Component {
         let {options,skus} = resetState(array,indexOptions);
         this.setState( {options,skus});
     }
+
     removeSku = (e,index) => {
         e.preventDefault();
         if(this.state.skus.length < 2) {
@@ -98,10 +109,8 @@ class ProductFormAdd extends Component {
     // product inputs
     handleChange = (e) => {
         e.preventDefault();
-        let field = e.target.name;
-        let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-        let product = {...this.state.product};
-        product[field] = value;
+        const product = {...this.state.product};
+        product[e.target.name] = e.target.value;
         this.setState(prevState => ({
             product
         }));
@@ -128,6 +137,7 @@ class ProductFormAdd extends Component {
             }));
         }
     }
+
     showOptions = (options) => {
         let output = options.map((o,index) => {
             return (
@@ -158,6 +168,7 @@ class ProductFormAdd extends Component {
         });
         return output;
     }
+
     remove = (e,index) => {
         e.preventDefault();
         if(this.state.count === 1) return;
@@ -170,6 +181,7 @@ class ProductFormAdd extends Component {
             skus
         }));
     }
+
     validateSku = (array) => {
         let map = new Map();
         for (let u of array) {
@@ -198,11 +210,7 @@ class ProductFormAdd extends Component {
             document.getElementById('error_option').innerText = uniqueOptions.size !== options.length ? 'Tên options là duy nhất' : '';
             return;
         }
-        if(document.getElementById('error_sku')) {
-            if(this.validateSku(uniqueSkus)) {
-                return;
-            }
-        }
+        if(document.getElementById('error_sku')) if(this.validateSku(uniqueSkus)) return;
         if (this.validator.allValid()) {
             let data = {...this.state.product};
             data.options = options;
@@ -309,7 +317,6 @@ class ProductFormAdd extends Component {
         return (
             <div className='row'>
                 <div className='col-md-12'>
-                    <NavLink to="/products" className='btn btn-outline-info'><i className='fa fa-step-backward'></i> Back</NavLink>
                     <h2 style={{color: 'red'}}>Product</h2>
                     <form onSubmit={this.submitForm}>
                         <div className='container-fluid'>
@@ -362,7 +369,7 @@ class ProductFormAdd extends Component {
                                         <label htmlFor="categories">Danh mục</label>
                                         <select
                                             multiple value={product.categories} onChange={this.handleSelect}
-                                                name='categories' id='categories' className='form-control'>
+                                            name='categories' id='categories' className='form-control'>
                                             { listCategories }
                                         </select>
                                         {this.validator.message('Danh mục', product.categories, 'required')}
@@ -398,13 +405,13 @@ class ProductFormAdd extends Component {
                                         {this.validator.message('Chế độ', product.vision, 'required')}
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor="vision">Trạng thái</label>
+                                        <label htmlFor="status">Trạng thái</label>
                                         <select value={product.status}
                                                 onChange={this.handleChange}
-                                                name='status' className='form-control' id="vision"
+                                                name='status' className='form-control' id="status"
                                         >
-                                            <option value={0}>Disable</option>
-                                            <option value={1}>Active</option>
+                                            <option value={false}>Disable</option>
+                                            <option value={true}>Active</option>
                                         </select>
                                         {this.validator.message('Trạng thái', product.status, 'required')}
                                     </div>
@@ -435,7 +442,7 @@ class ProductFormAdd extends Component {
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                { listSkus }
+                                            { listSkus }
                                             </tbody>
                                         </table>
                                     </div>
@@ -463,21 +470,17 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         getDatas: () => {
-            let brands =  store.getState().brands.length;
-            let categories = store.getState().categories.length;
+            const brands =  store.getState().brands.length;
+            const categories = store.getState().categories.length;
             if(!brands && !categories) {
                 dispatch(actionToggleLoading( true))
-                setTimeout(() => {
-                    dispatch(actionGetBrands());
-                    dispatch(actionGetCategories());
-                    dispatch(actionToggleLoading(false))
-                },2000);
+                dispatch(actionGetBrands());
+                dispatch(actionGetCategories());
+                dispatch(actionToggleLoading(false))
             }else if(!brands || !categories) {
                 dispatch(actionToggleLoading(true))
-                setTimeout( () => {
-                    dispatch(brands ? actionGetCategories() : actionGetBrands());
-                    dispatch(actionToggleLoading(false))
-                },2000);
+                dispatch(brands ? actionGetCategories() : actionGetBrands());
+                dispatch(actionToggleLoading(false))
             }else return;
         },
     }

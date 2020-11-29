@@ -1,4 +1,4 @@
-export default class Products {
+export default class Product {
     constructor(name,discount,categories,brand,priority,vision,description,status,options,skus) {
         this.name = name;
         this.discount = discount;

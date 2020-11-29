@@ -4,7 +4,7 @@ const InputNumber = (props) => {
     const [number, setNumber] = useState(1);
     useEffect(() => {
         props.event(props.index,number);
-    },[number,props]);
+    },[number]);
 
     const minus = (e) => {
         e.preventDefault();

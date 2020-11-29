@@ -66,23 +66,30 @@ const ProductList = (props) => {
         }
         return (<span className={`badge ${className}`}>{text}</span>)
     }
+
+    const remove = (e, id) => {
+        e.preventDefault();
+        props.eventRemove(id);
+    }
+
     return (
-        <div className={`card-body table-responsive p-0 col-md-12`}>
-            <table className="table table-hover text-nowrap">
-                <thead>
-                <tr>
-                    <th><a href=' #' className="btn btn-outline-danger"><i className="fa fa-trash-alt"></i></a></th>
-                    <th>Ảnh</th>
-                    <th>Tên</th>
-                    <th>Nhãn hiệu</th>
-                    <th>Danh mục</th>
-                    <th>Độ ưu tiên</th>
-                    <th>Chế độ</th>
-                    <th>Trạng thái</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
+        <React.Fragment>
+            {(!props.items || !props.items.length) ? (<h3>Chưa có sản phẩm nào</h3>) : (
+                <table className="table table-hover text-nowrap">
+                    <thead>
+                    <tr>
+                        <th><a href=' #' className="btn btn-outline-danger"><i className="fa fa-trash-alt"></i></a></th>
+                        <th>Ảnh</th>
+                        <th>Tên</th>
+                        <th>Nhãn hiệu</th>
+                        <th>Danh mục</th>
+                        <th>Độ ưu tiên</th>
+                        <th>Chế độ</th>
+                        <th>Trạng thái</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     {(props.items || props.items.length) &&
                     (props.items.map((item,index) => (
                         <tr key={item.id}>
@@ -91,7 +98,7 @@ const ProductList = (props) => {
                                     id={`check${index}`}
                                     name="check" type="checkbox"
                                     className="form-check-input"/>
-                                    <label htmlFor={`check${index}`}></label>
+                                <label htmlFor={`check${index}`}></label>
                             </div></td>
                             <td>
                                 <img alt='' src={(item.image)
@@ -102,11 +109,11 @@ const ProductList = (props) => {
                             <td>{item.name}</td>
                             <td>{item.brand.name}</td>
                             <td><ul>
-                                    {
-                                        (item.categories || item.categories.length) &&
-                                        (renderCategories(item.categories))
-                                    }
-                                </ul></td>
+                                {
+                                    (item.categories || item.categories.length) &&
+                                    (renderCategories(item.categories))
+                                }
+                            </ul></td>
                             <td>{renderPriority(item.priority)}</td>
                             <td>{renderVision(item.vision)}</td>
                             <td>{renderStatus(item.status)}</td>
@@ -114,13 +121,14 @@ const ProductList = (props) => {
                                 <NavLink to={`/products/edit/${item.id}`} style={{ marginRight: '5px' }} type="button" className="btn btn-outline-warning">
                                     <i className="fa fa-pen"></i>
                                 </NavLink>
-                                <button type="button" className="btn btn-outline-danger"><i className="fa fa-trash"></i></button>
+                                <button onClick={(e) => remove(e, item.id)} type="button" className="btn btn-outline-danger"><i className="fa fa-trash"></i></button>
                             </td>
                         </tr>
                     )))}
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            )}
+        </React.Fragment>
     )
 }
 export default ProductList;
