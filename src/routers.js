@@ -1,4 +1,4 @@
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./containers/Dashboard";
 import Categories from "./containers/Categories";
 import NotFound from "./components/404";
 import Brands from "./containers/Brands";

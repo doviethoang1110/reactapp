@@ -1,8 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
+import BarChart from "../components/chart/BarChart";
 
-class Dashboard extends Component {
-    render() {
-        return (
+const Dashboard = (props) => {
+    return (
+        <React.Fragment>
             <div className="row">
                 <div className="col-lg-3 col-6">
                     <div className="small-box bg-info">
@@ -53,7 +54,10 @@ class Dashboard extends Component {
                     </div>
                 </div>
             </div>
-        );
-    }
+            <div className="row">
+                <BarChart/>
+            </div>
+        </React.Fragment>
+    );
 }
 export default Dashboard;
