@@ -13,6 +13,7 @@ import Users from "./containers/Users";
 import Coupons from "./containers/Coupons";
 import Orders from "./containers/Orders";
 import Banners from "./containers/Banners";
+import UserDetails from "./containers/UserDetails";
 
 const routes = [
     {
@@ -26,6 +27,10 @@ const routes = [
     {
         path: '/brands',
         component: Brands
+    },
+    {
+        path: '/profile',
+        component: UserDetails
     },
     {
         path: '/products',

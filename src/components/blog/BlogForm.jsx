@@ -77,7 +77,7 @@ class BlogForm extends Component{
                 return;
             }
             const data = new FormData();
-            for (let d in blog) data.append(d,blog[d]);
+            for (let d in blog) data.append(d,blog[d])
             store.dispatch(actionToggleLoading(true))
             callApi(`blogs${blog.id ? '/'+blog.id : ''}`,'POST',data)
                 .then(response => {

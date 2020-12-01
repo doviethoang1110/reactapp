@@ -18,6 +18,7 @@ export const TOGGLE_LOADING = 'TOGGLE_LOADING';
 // authentication
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+export const EDIT_PROFILE = 'EDIT_PROFILE';
 
 // granted
 export const TOGGLE_GRANT = 'TOGGLE_GRANT';

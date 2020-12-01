@@ -1,5 +1,6 @@
 import React from "react";
 import {toast} from "../utils/alert";
+import {NavLink} from "react-router-dom";
 
 const Header = (props) => {
 
@@ -125,7 +126,7 @@ const Header = (props) => {
                     <li className="nav-item dropdown">
                         <a href="# " className="nav-link" data-toggle="dropdown" ><span>Hello {props.name}</span></a>
                         <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                            <a href="# " className="dropdown-item">Profile</a>
+                            <NavLink to={"/profile"} className="dropdown-item">Profile</NavLink>
                             <div className="dropdown-divider"></div>
                             <a href="# " onClick={logout} className="dropdown-item">Logout</a>
                             <div className="dropdown-divider"></div>

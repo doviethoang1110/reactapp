@@ -24,11 +24,11 @@ class App extends Component{
     }
 
     render() {
-        const { isLoading, isLogin, user, login, logout } = this.props;
+        const { isLoading, user, login, logout, displayName } = this.props;
         let loading = isLoading ?  <div className="loading" style={{display:"block"}}></div> : '';
         return (
             <React.Fragment>
-                {!isLogin ? (
+                {!user ? (
                     <React.Fragment>
                         <Redirect from="/" to="/login" exact/>
                         <Switch>
@@ -41,8 +41,8 @@ class App extends Component{
                 ) : (
                     <div className="App">
                         {loading}
-                        <Header name={user.name} logout={logout}/>
-                        <Aside name={user.name}/>
+                        <Header name={displayName ? displayName : user.name} logout={logout}/>
+                        <Aside name={displayName ? displayName : user.name}/>
                         <div className="content-wrapper">
                             <div className="content-header">
                                 <div className="container-fluid">
@@ -63,7 +63,7 @@ class App extends Component{
                                 <div className="container-fluid">
                                     <Switch>
                                         <Route path={["/login","/register"]} exact>
-                                            {isLogin && <Redirect exact to="/dashboard" />}
+                                            {user && <Redirect exact to="/dashboard" />}
                                         </Route>
                                         { this.renderContent(routes) }
                                     </Switch>
@@ -80,8 +80,8 @@ class App extends Component{
 const mapStateToProps = (state) => {
     return {
         isLoading: state.loading,
-        isLogin: state.auth.isLoggedIn,
-        user: state.auth.user
+        user: state.auth.user,
+        displayName: state.auth.user.userDetail.displayName
     };
 };
 

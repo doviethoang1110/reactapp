@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import BarChart from "../components/chart/BarChart";
 import callApi from "../utils/api";
+import {formatMoney} from "../utils/helpers";
 
 const Dashboard = (props) => {
 
@@ -48,7 +49,7 @@ const Dashboard = (props) => {
                 <div className="col-lg-3 col-6">
                     <div className="small-box bg-success">
                         <div className="inner">
-                            <h3>{totalAmount}</h3>
+                            <h3>{formatMoney(totalAmount, "VND")}</h3>
                             <p>Doanh thu</p>
                         </div>
                         <div className="icon">
