@@ -9,15 +9,7 @@ const Header = (props) => {
     return (
         <React.Fragment>
             <nav className="main-header navbar navbar-expand navbar-white navbar-light">
-                <ul className="navbar-nav">
-                    <li className="nav-item d-none d-sm-inline-block">
-                        <a href="# " className="nav-link">Home</a>
-                    </li>
-                    <li className="nav-item d-none d-sm-inline-block">
-                        <a href="# "  className="nav-link">Contact</a>
-                    </li>
-                </ul>
-                <form className="form-inline ml-3">
+                <form className="ml-3" style={{width: '500px'}}>
                     <div className="input-group input-group-sm">
                         <input className="form-control form-control-navbar" type="search" placeholder="Search"
                                aria-label="Search"/>
@@ -28,9 +20,7 @@ const Header = (props) => {
                         </div>
                     </div>
                 </form>
-                {/* Right navbar links */}
                 <ul className="navbar-nav ml-auto">
-                    {/* Messages Dropdown Menu */}
                     <li className="nav-item dropdown">
                         <a href="# " className="nav-link" data-toggle="dropdown" >
                             <i className="far fa-comments"/>
@@ -38,7 +28,6 @@ const Header = (props) => {
                         </a>
                         <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                             <a href="# " className="dropdown-item">
-                                {/* Message Start */}
                                 <div className="media">
                                     <img src="dist/img/user1-128x128.jpg" alt="User Avatar"
                                          className="img-size-50 mr-3 img-circle"/>
@@ -96,6 +85,12 @@ const Header = (props) => {
                             <div className="dropdown-divider"/>
                             <a href="# " className="dropdown-item dropdown-footer">See All Messages</a>
                         </div>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink to={"/friends"} className="nav-link">
+                            <i className="fa fa-user-plus"/>
+                            <span className="badge badge-primary navbar-badge">3</span>
+                        </NavLink>
                     </li>
                     <li className="nav-item dropdown">
                         <a href="# " className="nav-link" data-toggle="dropdown" >

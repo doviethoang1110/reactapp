@@ -2,16 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7c3d1373-6558-4cac-b198-8ce128732df8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/components/userDetail/UserDetailForm.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/friend/contact/Contact.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/friend/contact/ContactList.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/containers/Friends.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/actions/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/actions/auth.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Header.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/blog/BlogForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/blog/BlogForm.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constants/ActionTypes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/ActionTypes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/containers/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/containers/Dashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/containers/UserDetails.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/containers/UserDetails.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reducers/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/reducers/auth.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routers.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routers.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -62,12 +58,13 @@
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/public" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/components/friend/contact" />
       <recent name="$PROJECT_DIR$/src/containers" />
       <recent name="$PROJECT_DIR$/src/components" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public" />
     </key>
   </component>
   <component name="RunManager" selected="npm.npm start">
@@ -239,7 +236,7 @@
       <workItem from="1606703176383" duration="1919000" />
       <workItem from="1606721616145" duration="6344000" />
       <workItem from="1606741059554" duration="9165000" />
-      <workItem from="1606785117313" duration="1575000" />
+      <workItem from="1606785117313" duration="9175000" />
     </task>
     <servers />
   </component>

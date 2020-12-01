@@ -81,7 +81,7 @@ const mapStateToProps = (state) => {
     return {
         isLoading: state.loading,
         user: state.auth.user,
-        displayName: state.auth.user.userDetail.displayName
+        displayName: state.auth.user?.userDetail.displayName
     };
 };
 
