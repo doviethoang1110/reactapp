@@ -78,10 +78,6 @@ const routes = [
         component: Orders
     },
     {
-        path: '/friends',
-        component: Friends
-    },
-    {
         path: '',
         component: NotFound
     },

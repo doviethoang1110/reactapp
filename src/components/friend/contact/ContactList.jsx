@@ -2,6 +2,12 @@ import React from 'react';
 import {IMAGE_URL} from "../../../constants/config";
 
 const ContactList = (props) => {
+
+    const addFriend = (e,id) => {
+        e.preventDefault();
+        props.eventAddFriend(id);
+    }
+
     const list = !props.items.length ? null : props.items.map(item => (
         <div className="col-12 col-sm-6 col-md-4 d-flex align-items-stretch" key={item.id}>
             <div className="card bg-light">
@@ -25,12 +31,18 @@ const ContactList = (props) => {
                 </div>
                 <div className="card-footer">
                     <div className="text-right">
-                        <a href="#" className="btn btn-sm bg-teal mr-2">
-                            <i className="fas fa-user-plus"></i>
-                        </a>
-                        <a href="#" className="btn btn-sm btn-primary">
+                        {(item.status ? (
+                            <button onClick={(e) => addFriend(e,item.id)} className="btn btn-sm bg-danger mr-2">
+                                <i className="fas fa-remove"></i> Hủy yêu cầu kết bạn
+                            </button>
+                        ) : (
+                            <button onClick={(e) => addFriend(e,item.id)} className="btn btn-sm bg-teal mr-2">
+                                <i className="fas fa-user-plus"></i> Kết bạn
+                            </button>
+                        ))}
+                        <button className="btn btn-sm btn-primary">
                             <i className="fas fa-eye-dropper"></i> View Profile
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>

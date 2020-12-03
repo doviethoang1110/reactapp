@@ -6,14 +6,18 @@ import {
     LOGOUT_SUCCESS
 } from "../constants/ActionTypes";
 import Cookie from "universal-cookie";
+import socket from "../utils/socket";
 const cookie = new Cookie();
+
 export const actionLogin = (data) => {
     return (dispatch) => {
         return callApi('auth/login', 'POST', data)
             .then(res => {
                 const { user } = decode(res.data.token);
                 localStorage.setItem("user", JSON.stringify(user));
-                dispatch({type: LOGIN_SUCCESS, user:{user}})
+                dispatch({type: LOGIN_SUCCESS, user:{user}});
+                socket.emit("SET_USER_ID", user.id)
+                cookie.set("socket", socket.id);
                 cookie.set("token", res.data.token, {maxAge: 3600});
                 cookie.set("refreshToken", res.data.refreshToken, {maxAge: 86400});
                 return Promise.resolve('Đăng nhập thành công');

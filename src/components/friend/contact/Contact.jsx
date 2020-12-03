@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import Pagination from "../../Pagination";
 import ContactList from "./ContactList";
 import {calCurrentItems, getDatas} from "../../../utils/helpers";
+import {addFriendRequest} from "../../../utils/socket/friendRequest";
 
 const Contact = (props) => {
 
@@ -11,8 +12,13 @@ const Contact = (props) => {
     const [filterContacts, setFilterContacts] = useState([]);
 
     useEffect(() => {
-        getDatas('users/userDetails', setContacts);
+        getDatas(`users/${props.id}/contacts`, setContacts);
     },[]);
+
+    const addFriend = (id) => {
+        addFriendRequest({requesterId: props.id, addresserId: id, requesterName: props.name});
+    }
+
 
     const change = (e) => {
         const input = e.target.value.toLowerCase().trim();
@@ -42,7 +48,8 @@ const Contact = (props) => {
             <div className="card card-solid">
                 <div className="card-body pb-0">
                     <div className="row d-flex align-items-stretch">
-                        <ContactList items={calCurrentItems(currentPage, filterContacts.length ? filterContacts : (input ? [] : contacts))}/>
+                        <ContactList eventAddFriend={addFriend}
+                            items={calCurrentItems(currentPage, filterContacts.length ? filterContacts : (input ? [] : contacts))}/>
                     </div>
                 </div>
                 <div className="card-footer">

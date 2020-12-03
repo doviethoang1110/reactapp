@@ -1,6 +1,7 @@
 import React from "react";
 import {toast} from "../utils/alert";
-import {NavLink} from "react-router-dom";
+import {Link} from "react-router-dom";
+import {IMAGE_URL} from "../constants/config";
 
 const Header = (props) => {
 
@@ -86,11 +87,34 @@ const Header = (props) => {
                             <a href="# " className="dropdown-item dropdown-footer">See All Messages</a>
                         </div>
                     </li>
-                    <li className="nav-item">
-                        <NavLink to={"/friends"} className="nav-link">
+                    <li className={`nav-item dropdown`}>
+                        <a href=" #" className="nav-link" data-toggle="dropdown">
                             <i className="fa fa-user-plus"/>
-                            <span className="badge badge-primary navbar-badge">3</span>
-                        </NavLink>
+                            <span className="badge badge-primary navbar-badge">{props.requestsReceived.length}</span>
+                        </a>
+                        <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                            <span className="dropdown-item dropdown-header">{props.requestsReceived.length} Friend Request</span>
+                            <div className="dropdown-divider"/>
+                            {props.requestsReceived.length && props.requestsReceived.map((f,index) => (
+                                <React.Fragment key={index}>
+                                    <a href="# " className="dropdown-item">
+                                        <div className="row">
+                                            <div className="col-md-8">
+                                                <img alt=" " style={{width: '30px',borderRadius:'100%'}} src={
+                                                    f.image ? IMAGE_URL+f.image : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
+                                                }/> {f.displayName ? f.displayName : f.name}
+                                            </div>
+                                            <div className="col-md-4">
+                                                <span className="float-right text-muted text-sm">3 mins</span><br/>
+                                                <button className="btn btn-sm btn-primary">Xác nhận</button>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div className="dropdown-divider"/>
+                                </React.Fragment>
+                            ))}
+                            <Link to={"/friends"} className="dropdown-item dropdown-footer">Xem tất cả</Link>
+                        </div>
                     </li>
                     <li className="nav-item dropdown">
                         <a href="# " className="nav-link" data-toggle="dropdown" >
@@ -121,7 +145,7 @@ const Header = (props) => {
                     <li className="nav-item dropdown">
                         <a href="# " className="nav-link" data-toggle="dropdown" ><span>Hello {props.name}</span></a>
                         <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                            <NavLink to={"/profile"} className="dropdown-item">Profile</NavLink>
+                            <Link to={"/profile"} className="dropdown-item">Profile</Link>
                             <div className="dropdown-divider"></div>
                             <a href="# " onClick={logout} className="dropdown-item">Logout</a>
                             <div className="dropdown-divider"></div>

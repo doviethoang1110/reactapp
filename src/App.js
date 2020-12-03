@@ -8,8 +8,27 @@ import { connect } from "react-redux";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import {actionLogin, actionLogout} from "./actions/auth";
+import socket from "./utils/socket";
+import callApi from "./utils/api";
+import Friends from "./containers/Friends";
 
 class App extends Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            requestsReceived: []
+        }
+    }
+
+    componentDidMount() {
+        socket.emit("SET_USER_ID", this.props.user?.id);
+        callApi(`users/${this.props.user?.id}/friendRequestReceived`)
+            .then(res => {
+                this.setState({requestsReceived: res.data});
+            }).catch(error => {
+                console.log(error)
+            })
+    }
 
     renderContent = (routes) => {
         let content = null;
@@ -25,6 +44,7 @@ class App extends Component{
 
     render() {
         const { isLoading, user, login, logout, displayName } = this.props;
+        const { requestsReceived } = this.state;
         let loading = isLoading ?  <div className="loading" style={{display:"block"}}></div> : '';
         return (
             <React.Fragment>
@@ -41,7 +61,7 @@ class App extends Component{
                 ) : (
                     <div className="App">
                         {loading}
-                        <Header name={displayName ? displayName : user.name} logout={logout}/>
+                        <Header name={displayName ? displayName : user.name} logout={logout} requestsReceived={requestsReceived}/>
                         <Aside name={displayName ? displayName : user.name}/>
                         <div className="content-wrapper">
                             <div className="content-header">
@@ -65,6 +85,9 @@ class App extends Component{
                                         <Route path={["/login","/register"]} exact>
                                             {user && <Redirect exact to="/dashboard" />}
                                         </Route>
+                                        <Route path="/friends" render={(props) => (
+                                            <Friends {...props} requestsReceived={requestsReceived} />
+                                        )} />} exact/>
                                         { this.renderContent(routes) }
                                     </Switch>
                                 </div>
