@@ -11,6 +11,7 @@ import {actionLogin, actionLogout} from "./actions/auth";
 import socket from "./utils/socket";
 import callApi from "./utils/api";
 import Friends from "./containers/Friends";
+import {toast} from "./utils/alert";
 
 class App extends Component{
     constructor(props) {
@@ -27,7 +28,13 @@ class App extends Component{
                 this.setState({requestsReceived: res.data});
             }).catch(error => {
                 console.log(error)
-            })
+            });
+        socket.on("RECEIVED_ADD_FRIEND_REQUEST", (data) => {
+            const requestsReceived = this.state.requestsReceived;
+            requestsReceived.push(data);
+            toast('success', `${data.displayName || data.name} <br/>gửi cho bạn 1 lời mời kết bạn`);
+            this.setState({requestsReceived});
+        })
     }
 
     renderContent = (routes) => {

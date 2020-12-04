@@ -5,6 +5,7 @@ import ListFriend from "../components/friend/listfriend/ListFriend";
 import callApi from "../utils/api";
 import ListRequest from "../components/friend/listfriend/ListRequest";
 import RequestReceived from "../components/friend/listfriend/RequestReceived";
+import socket from "../utils/socket";
 
 const Friends = (props) => {
 
@@ -12,13 +13,17 @@ const Friends = (props) => {
     const [addFriendRequest, setAddFriendRequest] = useState([]);
 
     useEffect(() => {
-        callApi(`users/${props.id}/listFriends`)
+        callApi(`users/${props.user.id}/listFriends`)
             .then(res => {
                 setFriends(res.data.listFriend);
                 setAddFriendRequest(res.data.addFriendRequest);
             }).catch(error => {
                 console.log(error);
-        })
+            });
+        socket.on("ADD_FRIEND_REQUEST_SUCCESS", (data) => {
+            addFriendRequest.push(data)
+            setAddFriendRequest(addFriendRequest);
+        });
     }, []);
 
     return (
@@ -34,16 +39,16 @@ const Friends = (props) => {
                 </li>
                 <li className="nav-item">
                     <a className="nav-link" id="wait-tab" data-toggle="tab" href="#wait" role="tab"
-                       aria-controls="profile" aria-selected="false">Đang chờ xác nhận</a>
+                       aria-controls="profile" aria-selected="false">Đang chờ xác nhận <span className="text-primary">({addFriendRequest.length})</span></a>
                 </li>
                 <li className="nav-item">
                     <a className="nav-link" id="request-tab" data-toggle="tab" href="#request" role="tab"
-                       aria-controls="profile" aria-selected="false">Yêu cầu kết bạn</a>
+                       aria-controls="profile" aria-selected="false">Yêu cầu kết bạn <span className="text-primary">({props.requestsReceived.length})</span></a>
                 </li>
             </ul>
             <div className="tab-content" id="myTabContent">
                 <div className="tab-pane fade show active" id="contact" role="tabpanel">
-                    <Contact id={props.id} name={props.name}/>
+                    <Contact user={props.user}/>
                 </div>
                 <div className="tab-pane fade show" id="list-friend" role="tabpanel">
                     <ListFriend friends={friends}/>
@@ -61,8 +66,7 @@ const Friends = (props) => {
 
 const mapStateToProps = (state) => {
     return {
-        id: state.auth.user.id,
-        name: state.auth.user.userDetail.displayName || state.auth.user.name
+        user: state.auth.user
     };
 };
 

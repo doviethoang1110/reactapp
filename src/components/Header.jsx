@@ -93,9 +93,9 @@ const Header = (props) => {
                             <span className="badge badge-primary navbar-badge">{props.requestsReceived.length}</span>
                         </a>
                         <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                            <span className="dropdown-item dropdown-header">{props.requestsReceived.length} Friend Request</span>
+                            <span className="dropdown-item dropdown-header">{props.requestsReceived.length ? `${props.requestsReceived.length} Friend Request` : 'Không'}</span>
                             <div className="dropdown-divider"/>
-                            {props.requestsReceived.length && props.requestsReceived.map((f,index) => (
+                            {(props.requestsReceived.length > 0) && props.requestsReceived.map((f,index) => (
                                 <React.Fragment key={index}>
                                     <a href="# " className="dropdown-item">
                                         <div className="row">
@@ -113,7 +113,9 @@ const Header = (props) => {
                                     <div className="dropdown-divider"/>
                                 </React.Fragment>
                             ))}
-                            <Link to={"/friends"} className="dropdown-item dropdown-footer">Xem tất cả</Link>
+                            <Link to={"/friends"} className="dropdown-item dropdown-footer">
+                                {props.requestsReceived.length ? 'Xem tất cả' : 'Tìm bạn bè' }
+                            </Link>
                         </div>
                     </li>
                     <li className="nav-item dropdown">

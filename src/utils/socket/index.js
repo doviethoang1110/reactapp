@@ -10,8 +10,4 @@ const socket = io(`${HOST}`,{
     }
 });
 
-socket.on("RECEIVED_ADD_FRIEND_REQUEST", (data) => {
-    console.log(data)
-})
-
 export default socket;

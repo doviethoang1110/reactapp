@@ -12,11 +12,27 @@ const Contact = (props) => {
     const [filterContacts, setFilterContacts] = useState([]);
 
     useEffect(() => {
-        getDatas(`users/${props.id}/contacts`, setContacts);
+        getDatas(`users/${props.user.id}/contacts`, setContacts);
     },[]);
 
     const addFriend = (id) => {
-        addFriendRequest({requesterId: props.id, addresserId: id, requesterName: props.name});
+        let request = contacts.find(c => c.id === +id);
+        const sender = {
+            name: props.user.name,
+            displayName: props.user.userDetail.displayName,
+            email: props.user.email,
+            image: props.user.userDetail.image,
+            id: props.user.id
+        };
+        const receiver = {
+            name: request.name,
+            displayName: request.userDetail.displayName,
+            email: request.email,
+            image: request.userDetail.image,
+            id,
+        };
+        request = {sender, receiver};
+        addFriendRequest(request);
     }
 
 

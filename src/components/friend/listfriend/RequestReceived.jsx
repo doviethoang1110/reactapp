@@ -12,6 +12,7 @@ const RequestReceived = (props) => {
                             f.image ? IMAGE_URL+f.image : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
                         } alt="user image"/>
                         <span className="username">{f.displayName ? f.displayName : f.name}</span>
+                        <span className="description">{f.email}</span>
                     </div>
                 </div>
             </div>
