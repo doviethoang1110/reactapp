@@ -10,7 +10,7 @@ const ListFriend = (props) => {
                     <div className="user-block">
                         <img className="img-circle img-bordered-sm" src={
                             f.image ? API_URL+f.image : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
-                        } alt="user image"/>
+                        } alt=""/>
                         <span className="username">{f.displayName ? f.displayName : f.name}</span>
                         <span className="description">{f.email}</span>
                     </div>

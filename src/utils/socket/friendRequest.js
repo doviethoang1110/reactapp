@@ -7,3 +7,7 @@ export const addFriendRequest = (data) => {
         console.log(data)
     });
 }
+
+export const deniedFriendRequest = (data) => {
+    socket.emit("DENIED_ADD_FRIEND_REQUEST", data);
+}

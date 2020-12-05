@@ -30,8 +30,7 @@ class Login extends Component{
             const data = this.state.user;
             this.props.login(data)
                 .then(res => {
-                    this.props.history.push("/dashboard");
-                    toast('success', res)
+                    window.location.reload()
                 }).catch(error => {
                 document.getElementById('errMsg').innerText = error;
             });

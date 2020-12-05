@@ -1,25 +1,21 @@
 import React from 'react';
 import {IMAGE_URL} from "../../../constants/config";
+import {Link} from "react-router-dom";
 
 const ContactList = (props) => {
-
-    const addFriend = (e,id) => {
-        e.preventDefault();
-        props.eventAddFriend(id);
-    }
 
     const list = !props.items.length ? null : props.items.map(item => (
         <div className="col-12 col-sm-6 col-md-4 d-flex align-items-stretch" key={item.id}>
             <div className="card bg-light">
-                <div className="card-header text-muted border-bottom-0"><b>Job:</b> {item.userDetail.job ? item.userDetail.job : 'Không'}</div>
+                <div className="card-header text-muted border-bottom-0"><b>Job:</b> {item.userDetail.job || 'Không'}</div>
                 <div className="card-body pt-0">
                     <div className="row">
                         <div className="col-7">
-                            <h2 className="lead"><b>Name: {item.userDetail.displayName ? item.userDetail.displayName : item.name}</b></h2>
-                            <p className="text-muted text-sm"><b>Skill:</b> {item.userDetail.skill ? item.userDetail.skill : 'Không'}</p>
+                            <h2 className="lead"><b>Name: {item.userDetail.displayName || item.name}</b></h2>
+                            <p className="text-muted text-sm"><b>Skill:</b> {item.userDetail.skill || 'Không'}</p>
                             <ul className="ml-4 mb-0 fa-ul text-muted">
                                 <li className="small"><span className="fa-li"><i
-                                    className="fas fa-lg fa-building"></i></span> Address: {item.userDetail.location ? item.userDetail.location : 'Không'}
+                                    className="fas fa-lg fa-building"></i></span> Address: {item.userDetail.location || 'Không'}
                                 </li>
                             </ul>
                         </div>
@@ -31,18 +27,9 @@ const ContactList = (props) => {
                 </div>
                 <div className="card-footer">
                     <div className="text-right">
-                        {(item.status ? (
-                            <button onClick={(e) => addFriend(e,item.id)} className="btn btn-sm bg-danger mr-2">
-                                <i className="fas fa-remove"></i> Hủy yêu cầu kết bạn
-                            </button>
-                        ) : (
-                            <button onClick={(e) => addFriend(e,item.id)} className="btn btn-sm bg-teal mr-2">
-                                <i className="fas fa-user-plus"></i> Kết bạn
-                            </button>
-                        ))}
-                        <button className="btn btn-sm btn-primary">
+                        <Link to={`/view-profile/${item.userDetail.displayName || item.name}_${item.id}`} className="btn btn-sm btn-primary">
                             <i className="fas fa-eye-dropper"></i> View Profile
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

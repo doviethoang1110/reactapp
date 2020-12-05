@@ -64,7 +64,7 @@ const Contact = (props) => {
             <div className="card card-solid">
                 <div className="card-body pb-0">
                     <div className="row d-flex align-items-stretch">
-                        <ContactList eventAddFriend={addFriend}
+                        <ContactList
                             items={calCurrentItems(currentPage, filterContacts.length ? filterContacts : (input ? [] : contacts))}/>
                     </div>
                 </div>

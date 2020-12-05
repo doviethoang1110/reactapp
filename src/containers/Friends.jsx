@@ -3,29 +3,29 @@ import Contact from "../components/friend/contact/Contact";
 import {connect} from "react-redux";
 import ListFriend from "../components/friend/listfriend/ListFriend";
 import callApi from "../utils/api";
-import ListRequest from "../components/friend/listfriend/ListRequest";
 import RequestReceived from "../components/friend/listfriend/RequestReceived";
 import socket from "../utils/socket";
+import {deniedFriendRequest} from "../utils/socket/friendRequest";
 
 const Friends = (props) => {
 
     const [friends, setFriends] = useState([]);
-    const [addFriendRequest, setAddFriendRequest] = useState([]);
 
     useEffect(() => {
         callApi(`users/${props.user.id}/listFriends`)
             .then(res => {
                 setFriends(res.data.listFriend);
-                setAddFriendRequest(res.data.addFriendRequest);
             }).catch(error => {
                 console.log(error);
             });
-        socket.on("ADD_FRIEND_REQUEST_SUCCESS", (data) => {
-            addFriendRequest.push(data)
-            setAddFriendRequest(addFriendRequest);
-        });
     }, []);
 
+    const eventDeniedRequest = (id) => {
+        deniedFriendRequest({requesterId: props.user.id, addresserId: id});
+        socket.on("DENIED_ADD_FRIEND_REQUEST_SUCCESS", (data) => {
+
+        });
+    }
     return (
         <React.Fragment>
             <ul className="nav nav-tabs" id="myTab" role="tablist">
@@ -38,10 +38,6 @@ const Friends = (props) => {
                        aria-controls="profile" aria-selected="false">Danh sách bạn bè</a>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" id="wait-tab" data-toggle="tab" href="#wait" role="tab"
-                       aria-controls="profile" aria-selected="false">Đang chờ xác nhận <span className="text-primary">({addFriendRequest.length})</span></a>
-                </li>
-                <li className="nav-item">
                     <a className="nav-link" id="request-tab" data-toggle="tab" href="#request" role="tab"
                        aria-controls="profile" aria-selected="false">Yêu cầu kết bạn <span className="text-primary">({props.requestsReceived.length})</span></a>
                 </li>
@@ -52,9 +48,6 @@ const Friends = (props) => {
                 </div>
                 <div className="tab-pane fade show" id="list-friend" role="tabpanel">
                     <ListFriend friends={friends}/>
-                </div>
-                <div className="tab-pane fade show" id="wait" role="tabpanel">
-                    <ListRequest request={addFriendRequest}/>
                 </div>
                 <div className="tab-pane fade show" id="request" role="tabpanel">
                     <RequestReceived requestsReceived={props.requestsReceived}/>
