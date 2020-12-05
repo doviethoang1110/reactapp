@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import {IMAGE_URL} from "../constants/config";
 import {connect} from "react-redux";
 import callApi from "../utils/api";
+import {destroyFriendRequest,addFriendRequest} from "../utils/socket/friendRequest";
+import socket from "../utils/socket";
 
 const Profile = (props) => {
 
@@ -10,14 +12,42 @@ const Profile = (props) => {
         displayName: "",job:"",location: "",image:"",skill:"",education:"",notes:""
     });
 
+    const addFriend = (e, id) => {
+        e.preventDefault();
+        const sender = {
+            name: props.user.name,
+            displayName: props.user.userDetail.displayName,
+            email: props.user.email,
+            image: props.user.userDetail.image,
+            id: props.user.id
+        };
+        const receiver = {
+            name: profile.name,
+            displayName: profile.displayName,
+            email: profile.email,
+            image: profile.image,
+            id,
+        };
+        addFriendRequest({sender, receiver});
+        const newProfile = {...profile,status: 1, userActionId: props.user.id};
+        setProfile(newProfile);
+    }
+
+    const removeFriendRequest = (e, id) => {
+        e.preventDefault();
+        destroyFriendRequest({requesterId: props.user.id, addresserId: id});
+        const newProfile = {...profile,status: null, userActionId: null};
+        setProfile(newProfile)
+    }
+
     useEffect(() => {
         const id = +props.match.params.id.substring(props.match.params.id.indexOf("_")+1);
-        callApi(`users/${props.id}/profile/${id}`)
+        callApi(`users/${props.user.id}/profile/${id}`)
             .then(res => {
                 setProfile(res.data[0]);
             }).catch(error => {
                 console.log(error);
-        })
+        });
     },[]);
 
     return (
@@ -46,14 +76,14 @@ const Profile = (props) => {
                                     <button className="btn btn-success btn-block"><b>Bạn bè</b></button>
                                 )}
                                 {(profile.status && profile.status === 1 && profile.userActionId) && (
-                                    profile.userActionId === props.id ? (
-                                        <button className="btn btn-danger btn-block"><b>Hủy yêu cầu kết bạn</b></button>
+                                    profile.userActionId === props.user.id ? (
+                                        <button onClick={(e) => removeFriendRequest(e, profile.id)} className="btn btn-danger btn-block"><b>Hủy yêu cầu kết bạn</b></button>
                                     ) : (
                                         <button className="btn btn-primary btn-block"><b>Chấp nhận yêu cầu kết bạn</b></button>
                                     )
                                 )}
                                 {(!profile.status && !profile.userActionId) && (
-                                    <button className="btn btn-info btn-block"><b>Thêm bạn bè</b></button>
+                                    <button onClick={(e) => addFriend(e, profile.id)} className="btn btn-info btn-block"><b>Thêm bạn bè</b></button>
                                 )}
                             </div>
                         </div>
@@ -220,7 +250,7 @@ const Profile = (props) => {
 
 const mapStateToProps = (state) => {
     return {
-        id: state.auth.user.id
+        user: state.auth.user
     };
 };
 

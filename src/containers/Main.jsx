@@ -40,7 +40,7 @@ const Main = (props) => {
             toast('success', `${data.displayName || data.name} <br/>gửi cho bạn 1 lời mời kết bạn`);
             setRequestReceived([...requestsReceived]);
         });
-        socket.on("RECEIVED_DENIED_ADD_FRIEND_REQUEST", (data) => {
+        socket.on("REMOVE_ADD_FRIEND_REQUEST_SUCCESS", (data) => {
             requestsReceived.splice(requestsReceived.indexOf(requestsReceived.find(a => a.id === +data)),1);
             setRequestReceived([...requestsReceived]);
         });

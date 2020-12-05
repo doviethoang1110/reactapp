@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import Pagination from "../../Pagination";
 import ContactList from "./ContactList";
 import {calCurrentItems, getDatas} from "../../../utils/helpers";
-import {addFriendRequest} from "../../../utils/socket/friendRequest";
 
 const Contact = (props) => {
 
@@ -14,27 +13,6 @@ const Contact = (props) => {
     useEffect(() => {
         getDatas(`users/${props.user.id}/contacts`, setContacts);
     },[]);
-
-    const addFriend = (id) => {
-        let request = contacts.find(c => c.id === +id);
-        const sender = {
-            name: props.user.name,
-            displayName: props.user.userDetail.displayName,
-            email: props.user.email,
-            image: props.user.userDetail.image,
-            id: props.user.id
-        };
-        const receiver = {
-            name: request.name,
-            displayName: request.userDetail.displayName,
-            email: request.email,
-            image: request.userDetail.image,
-            id,
-        };
-        request = {sender, receiver};
-        addFriendRequest(request);
-    }
-
 
     const change = (e) => {
         const input = e.target.value.toLowerCase().trim();

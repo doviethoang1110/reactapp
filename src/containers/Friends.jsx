@@ -4,8 +4,6 @@ import {connect} from "react-redux";
 import ListFriend from "../components/friend/listfriend/ListFriend";
 import callApi from "../utils/api";
 import RequestReceived from "../components/friend/listfriend/RequestReceived";
-import socket from "../utils/socket";
-import {deniedFriendRequest} from "../utils/socket/friendRequest";
 
 const Friends = (props) => {
 
@@ -20,12 +18,6 @@ const Friends = (props) => {
             });
     }, []);
 
-    const eventDeniedRequest = (id) => {
-        deniedFriendRequest({requesterId: props.user.id, addresserId: id});
-        socket.on("DENIED_ADD_FRIEND_REQUEST_SUCCESS", (data) => {
-
-        });
-    }
     return (
         <React.Fragment>
             <ul className="nav nav-tabs" id="myTab" role="tablist">
