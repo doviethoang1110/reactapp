@@ -3,6 +3,11 @@ import {IMAGE_URL} from "../../../constants/config";
 
 const RequestReceived = (props) => {
 
+    const acceptRequest = (e, id) => {
+        e.preventDefault();
+        props.eventAcceptRequest(id);
+    }
+
     const list = !props.requestsReceived.length ? (<h3>Chưa có yêu cầu nào</h3>) : props.requestsReceived.map((f,index) => (
         <div className="row" key={index}>
             <div className="col-md-6">
@@ -17,7 +22,11 @@ const RequestReceived = (props) => {
                 </div>
             </div>
             <div className="col-md-6">
-                <button className="btn btn-primary"><i className="fa fa-check"></i> Xác nhận</button>
+                {!f.status ? (
+                    <button onClick={(e) => acceptRequest(e, f.id)} className="btn btn-primary"><i className="fa fa-check"></i> Xác nhận</button>
+                ) : (
+                    <span className="badge badge-light"><i className="fa fa-check"></i> <span style={{fontSize:'16px'}}>Bạn bè</span></span>
+                )}
             </div>
         </div>
     ));

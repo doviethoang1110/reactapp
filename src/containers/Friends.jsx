@@ -42,7 +42,7 @@ const Friends = (props) => {
                     <ListFriend friends={friends}/>
                 </div>
                 <div className="tab-pane fade show" id="request" role="tabpanel">
-                    <RequestReceived requestsReceived={props.requestsReceived}/>
+                    <RequestReceived eventAcceptRequest={props.eventAcceptRequest} requestsReceived={props.requestsReceived}/>
                 </div>
             </div>
         </React.Fragment>

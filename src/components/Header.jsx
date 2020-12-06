@@ -7,6 +7,11 @@ const Header = (props) => {
 
     const logout = () => props.logout().then(res => toast('success', res));
 
+    const acceptRequest = (e, id) => {
+        e.preventDefault();
+        props.eventAcceptRequest(id);
+    }
+
     return (
         <React.Fragment>
             <nav className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -106,7 +111,11 @@ const Header = (props) => {
                                             </div>
                                             <div className="col-md-4">
                                                 <span className="float-right text-muted text-sm">3 mins</span><br/>
-                                                <button className="btn btn-sm btn-primary">Xác nhận</button>
+                                                {!f.status ? (
+                                                    <button onClick={(e) => acceptRequest(e, f.id)} className="btn btn-sm btn-primary">Xác nhận</button>
+                                                ) : (
+                                                    <span className="badge badge-light"><i className="fa fa-check"></i> <span style={{fontSize:'16px'}}>Bạn bè</span></span>
+                                                )}
                                             </div>
                                         </div>
                                     </a>

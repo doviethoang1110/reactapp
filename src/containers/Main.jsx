@@ -9,6 +9,7 @@ import {connect} from "react-redux";
 import socket from "../utils/socket";
 import callApi from "../utils/api";
 import {toast} from "../utils/alert";
+import {acceptFriendRequest} from "../utils/socket/friendRequest";
 
 const Main = (props) => {
     const renderContent = (routes) => {
@@ -44,12 +45,24 @@ const Main = (props) => {
             requestsReceived.splice(requestsReceived.indexOf(requestsReceived.find(a => a.id === +data)),1);
             setRequestReceived([...requestsReceived]);
         });
+        socket.on("ACCEPT_ADD_FRIEND_REQUEST_SUCCESS", (addresserName) => {
+            toast('success', `${addresserName} <br/>chấp nhận lời mời kết bạn`);
+        });
     }, []);
+
+    const eventAcceptRequest = (id) => {
+        acceptFriendRequest({requesterId: id, addresserId: props.user.id, addresserName: props.user.userDetail.displayName || props.user.name});
+        const element = requestsReceived.find(r => r.id === id);
+        requestsReceived[requestsReceived.indexOf(element)] = {...element, status: true};
+        setRequestReceived([...requestsReceived])
+    }
 
     return (
         <div className="App">
             {props.isLoading ?  <div className="loading" style={{display:"block"}}></div> : ''}
-            <Header name={props.user.userDetail.displayName || props.user.name} logout={props.logout} requestsReceived={requestsReceived}/>
+            <Header name={props.user.userDetail.displayName || props.user.name}
+                    logout={props.logout} eventAcceptRequest={eventAcceptRequest}
+                    requestsReceived={requestsReceived}/>
             <Aside name={props.user.userDetail.displayName || props.user.name}/>
             <div className="content-wrapper">
                 <div className="content-header">
@@ -74,7 +87,7 @@ const Main = (props) => {
                                 {props.user && <Redirect exact to="/dashboard" />}
                             </Route>
                             <Route exact path="/friends" render={(props) => (
-                                <Friends {...props} requestsReceived={requestsReceived} />
+                                <Friends {...props} eventAcceptRequest={eventAcceptRequest} requestsReceived={requestsReceived} />
                             )} />
                             { renderContent(routes) }
                         </Switch>
