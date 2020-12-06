@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import ListFriend from "../components/friend/listfriend/ListFriend";
 import callApi from "../utils/api";
 import RequestReceived from "../components/friend/listfriend/RequestReceived";
+import {removeRelationShip} from "../utils/socket/friendRequest";
 
 const Friends = (props) => {
 
@@ -17,6 +18,12 @@ const Friends = (props) => {
                 console.log(error);
             });
     }, []);
+
+    const removeFriendShip = (id) => {
+        removeRelationShip({requesterId: id,addresserId: props.user.id});
+        friends.splice(friends.indexOf(friends.find(a => a.id === +id)),1);
+        setFriends([...friends]);
+    }
 
     return (
         <React.Fragment>
@@ -39,7 +46,7 @@ const Friends = (props) => {
                     <Contact user={props.user}/>
                 </div>
                 <div className="tab-pane fade show" id="list-friend" role="tabpanel">
-                    <ListFriend friends={friends}/>
+                    <ListFriend friends={friends} removeFriendShip={removeFriendShip}/>
                 </div>
                 <div className="tab-pane fade show" id="request" role="tabpanel">
                     <RequestReceived eventAcceptRequest={props.eventAcceptRequest} requestsReceived={props.requestsReceived}/>

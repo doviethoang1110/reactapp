@@ -35,7 +35,7 @@ const Profile = (props) => {
     const acceptRequest = (e, id) => {
         e.preventDefault();
         props.eventAcceptRequest(id);
-        setProfile({...profile,status: 3})
+        setProfile({...profile,status: 2})
     }
 
     const removeFriendRequest = (e, id) => {
@@ -77,7 +77,7 @@ const Profile = (props) => {
                                         <b>Friends</b> <a className="float-right">13,287</a>
                                     </li>
                                 </ul>
-                                {(profile.status && profile.status === 3) && (
+                                {(profile.status && profile.status === 2) && (
                                     <div className="row">
                                         <div className="col-md-6">
                                             <span className="btn btn-success btn-block"><b>Bạn bè</b></span>

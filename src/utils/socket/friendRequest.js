@@ -19,3 +19,8 @@ export const acceptFriendRequest = (data) => {
     socket.emit("ACCEPT_ADD_FRIEND_REQUEST", data);
    logSocketError(socket);
 }
+
+export const removeRelationShip = (data) => {
+    socket.emit("REMOVE_RELATIONSHIP", data);
+    logSocketError(socket);
+}
