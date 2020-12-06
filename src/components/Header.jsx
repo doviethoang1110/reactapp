@@ -105,9 +105,11 @@ const Header = (props) => {
                                     <a href="# " className="dropdown-item">
                                         <div className="row">
                                             <div className="col-md-8">
-                                                <img alt=" " style={{width: '30px',borderRadius:'100%'}} src={
-                                                    f.image ? IMAGE_URL+f.image : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
-                                                }/> {f.displayName ? f.displayName : f.name}
+                                                <Link to={`/view-profile/${f.displayName || f.name}_${f.id}`}>
+                                                    <img alt=" " style={{width: '30px',borderRadius:'100%'}} src={
+                                                        f.image ? IMAGE_URL+f.image : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
+                                                    }/> {f.displayName ? f.displayName : f.name}
+                                                </Link>
                                             </div>
                                             <div className="col-md-4">
                                                 <span className="float-right text-muted text-sm">3 mins</span><br/>

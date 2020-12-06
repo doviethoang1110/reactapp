@@ -10,6 +10,7 @@ import socket from "../utils/socket";
 import callApi from "../utils/api";
 import {toast} from "../utils/alert";
 import {acceptFriendRequest} from "../utils/socket/friendRequest";
+import Profile from "./Profile";
 
 const Main = (props) => {
     const renderContent = (routes) => {
@@ -88,6 +89,9 @@ const Main = (props) => {
                             </Route>
                             <Route exact path="/friends" render={(props) => (
                                 <Friends {...props} eventAcceptRequest={eventAcceptRequest} requestsReceived={requestsReceived} />
+                            )} />
+                            <Route exact path="/view-profile/:id" render={(props) => (
+                                <Profile {...props} eventAcceptRequest={eventAcceptRequest} />
                             )} />
                             { renderContent(routes) }
                         </Switch>

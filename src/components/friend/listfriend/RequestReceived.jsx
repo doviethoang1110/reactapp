@@ -1,5 +1,6 @@
 import React from "react";
 import {IMAGE_URL} from "../../../constants/config";
+import {Link} from "react-router-dom";
 
 const RequestReceived = (props) => {
 
@@ -13,11 +14,13 @@ const RequestReceived = (props) => {
             <div className="col-md-6">
                 <div className="post">
                     <div className="user-block">
-                        <img className="img-circle img-bordered-sm" src={
-                            f.image ? IMAGE_URL+f.image : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
-                        } alt=""/>
-                        <span className="username">{f.displayName ? f.displayName : f.name}</span>
-                        <span className="description">{f.email}</span>
+                        <Link to={`/view-profile/${f.displayName || f.name}_${f.id}`}>
+                            <img className="img-circle img-bordered-sm" src={
+                                f.image ? IMAGE_URL+f.image : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
+                            } alt=""/>
+                            <span className="username">{f.displayName ? f.displayName : f.name}</span>
+                            <span className="description">{f.email}</span>
+                        </Link>
                     </div>
                 </div>
             </div>

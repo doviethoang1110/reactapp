@@ -3,7 +3,6 @@ import {IMAGE_URL} from "../constants/config";
 import {connect} from "react-redux";
 import callApi from "../utils/api";
 import {destroyFriendRequest,addFriendRequest} from "../utils/socket/friendRequest";
-import socket from "../utils/socket";
 
 const Profile = (props) => {
 
@@ -31,6 +30,12 @@ const Profile = (props) => {
         addFriendRequest({sender, receiver});
         const newProfile = {...profile,status: 1, userActionId: props.user.id};
         setProfile(newProfile);
+    }
+
+    const acceptRequest = (e, id) => {
+        e.preventDefault();
+        props.eventAcceptRequest(id);
+        setProfile({...profile,status: 3})
     }
 
     const removeFriendRequest = (e, id) => {
@@ -79,7 +84,7 @@ const Profile = (props) => {
                                     profile.userActionId === props.user.id ? (
                                         <button onClick={(e) => removeFriendRequest(e, profile.id)} className="btn btn-danger btn-block"><b>Hủy yêu cầu kết bạn</b></button>
                                     ) : (
-                                        <button className="btn btn-primary btn-block"><b>Chấp nhận yêu cầu kết bạn</b></button>
+                                        <button onClick={(e) => acceptRequest(e, profile.id)} className="btn btn-primary btn-block"><b>Chấp nhận yêu cầu kết bạn</b></button>
                                     )
                                 )}
                                 {(!profile.status && !profile.userActionId) && (
