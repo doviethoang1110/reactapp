@@ -12,7 +12,7 @@ const Friends = (props) => {
     useEffect(() => {
         callApi(`users/${props.user.id}/listFriends`)
             .then(res => {
-                setFriends(res.data.listFriend);
+                setFriends(res.data);
             }).catch(error => {
                 console.log(error);
             });

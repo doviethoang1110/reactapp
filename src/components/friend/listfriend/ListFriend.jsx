@@ -1,5 +1,5 @@
 import React from "react";
-import {API_URL} from "../../../constants/config";
+import {IMAGE_URL} from "../../../constants/config";
 
 const ListFriend = (props) => {
 
@@ -9,7 +9,7 @@ const ListFriend = (props) => {
                 <div className="post">
                     <div className="user-block">
                         <img className="img-circle img-bordered-sm" src={
-                            f.image ? API_URL+f.image : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
+                            f.image ? IMAGE_URL+f.image : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
                         } alt=""/>
                         <span className="username">{f.displayName ? f.displayName : f.name}</span>
                         <span className="description">{f.email}</span>

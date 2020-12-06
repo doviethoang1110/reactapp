@@ -78,7 +78,14 @@ const Profile = (props) => {
                                     </li>
                                 </ul>
                                 {(profile.status && profile.status === 3) && (
-                                    <button className="btn btn-success btn-block"><b>Bạn bè</b></button>
+                                    <div className="row">
+                                        <div className="col-md-6">
+                                            <span className="btn btn-success btn-block"><b>Bạn bè</b></span>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <button className="btn btn-primary btn-block"><i className="fa fa-comment"></i> Chat</button>
+                                        </div>
+                                    </div>
                                 )}
                                 {(profile.status && profile.status === 1 && profile.userActionId) && (
                                     profile.userActionId === props.user.id ? (
