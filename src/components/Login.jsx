@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import SimpleReactValidator from "simple-react-validator";
 import {NavLink} from "react-router-dom";
-import {toast} from "../utils/alert";
 
 class Login extends Component{
     constructor(props) {

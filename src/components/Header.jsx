@@ -30,7 +30,7 @@ const Header = (props) => {
                     <li className="nav-item dropdown">
                         <a href="# " className="nav-link" data-toggle="dropdown" >
                             <i className="far fa-comments"/>
-                            <span className="badge badge-danger navbar-badge">3</span>
+                            <span className="badge badge-danger">3</span>
                         </a>
                         <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                             <a href="# " className="dropdown-item">
@@ -89,13 +89,13 @@ const Header = (props) => {
                                 {/* Message End */}
                             </a>
                             <div className="dropdown-divider"/>
-                            <a href="# " className="dropdown-item dropdown-footer">See All Messages</a>
+                            <Link to={"/messages"} className="dropdown-item dropdown-footer">See All Messages</Link>
                         </div>
                     </li>
                     <li className={`nav-item dropdown`}>
                         <a href=" #" className="nav-link" data-toggle="dropdown">
                             <i className="fa fa-user-plus"/>
-                            <span className="badge badge-primary navbar-badge">{props.requestsReceived.length}</span>
+                            <span className="badge badge-primary">{props.requestsReceived.length}</span>
                         </a>
                         <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                             <span className="dropdown-item dropdown-header">{props.requestsReceived.length ? `${props.requestsReceived.length} Friend Request` : 'Không'}</span>
@@ -132,7 +132,7 @@ const Header = (props) => {
                     <li className="nav-item dropdown">
                         <a href="# " className="nav-link" data-toggle="dropdown" >
                             <i className="far fa-bell"/>
-                            <span className="badge badge-warning navbar-badge">15</span>
+                            <span className="badge badge-warning">15</span>
                         </a>
                         <div className="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                             <span className="dropdown-item dropdown-header">15 Notifications</span>

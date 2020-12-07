@@ -7,10 +7,10 @@ import routes from "../routers";
 import {actionLogout} from "../actions/auth";
 import {connect} from "react-redux";
 import socket from "../utils/socket";
-import callApi from "../utils/api";
 import {toast} from "../utils/alert";
 import {acceptFriendRequest} from "../utils/socket/friendRequest";
 import Profile from "./Profile";
+import {getDatas} from "../utils/helpers";
 
 const Main = (props) => {
     const renderContent = (routes) => {
@@ -28,15 +28,7 @@ const Main = (props) => {
     const [requestsReceived, setRequestReceived] = useState([]);
 
     useEffect(() => {
-        socket.emit("SET_USER_ID", props.user?.id);
-        if(!requestsReceived.length) {
-            callApi(`users/${props.user?.id}/friendRequestReceived`)
-                .then(res => {
-                    setRequestReceived(res.data);
-                }).catch(error => {
-                console.log(error)
-            });
-        }
+        getDatas(`users/${props.user?.id}/friendRequestReceived`, setRequestReceived);
         socket.on("RECEIVED_ADD_FRIEND_REQUEST", (data) => {
             requestsReceived.push(data);
             toast('success', `${data.displayName || data.name} <br/>gửi cho bạn 1 lời mời kết bạn`);

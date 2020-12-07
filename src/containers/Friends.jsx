@@ -2,21 +2,16 @@ import React, {useEffect, useState} from "react";
 import Contact from "../components/friend/contact/Contact";
 import {connect} from "react-redux";
 import ListFriend from "../components/friend/listfriend/ListFriend";
-import callApi from "../utils/api";
 import RequestReceived from "../components/friend/listfriend/RequestReceived";
 import {removeRelationShip} from "../utils/socket/friendRequest";
+import {getDatas} from "../utils/helpers";
 
 const Friends = (props) => {
 
     const [friends, setFriends] = useState([]);
 
     useEffect(() => {
-        callApi(`users/${props.user.id}/listFriends`)
-            .then(res => {
-                setFriends(res.data);
-            }).catch(error => {
-                console.log(error);
-            });
+        getDatas(`users/${props.user.id}/listFriends`, setFriends);
     }, []);
 
     const removeFriendShip = (id) => {

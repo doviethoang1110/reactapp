@@ -4,10 +4,15 @@ import './App.css';
 import { connect } from "react-redux";
 import Register from "./components/Register";
 import Login from "./components/Login";
-import {actionLogin, actionLogout} from "./actions/auth";
+import {actionLogin} from "./actions/auth";
 import Main from "./containers/Main";
+import socket from "./utils/socket";
 
 class App extends Component{
+
+    componentDidMount() {
+        socket.emit("SET_USER_ID", this.props.user?.id);
+    }
 
     render() {
         const { user, login } = this.props;
