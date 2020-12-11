@@ -120,6 +120,8 @@ export const formatMoney = (money, currency) => {
     return new Intl.NumberFormat('en-US',{ style: 'currency', currency }).format(Math.round(money));
 }
 
-export const formatDate = (date) => {
-    return moment(date).format('DD-MMMM-YYYY');
-}
+export const formatDate = (date) => moment(date).format('DD-MMMM-YYYY');
+
+export const getTime = (date) => moment(date).format("MMM-DD hh:mm A");
+
+export const getTimeMessage = (date) => moment(date).format("hh:mm A");

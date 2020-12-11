@@ -3,7 +3,7 @@ import {IMAGE_URL} from "../../constants/config";
 
 const Modal = (props) => {
 
-    const list = !props.onlineFriends.length ? (<h3>Không ai online</h3>) : props.onlineFriends.map((f,index) => (
+    const list = !props.friends.length ? (<h3>Không ai online</h3>) : props.friends.map((f,index) => (
         <div className="row mb-3" key={index}>
             <div className="col-md-6">
                 <div className="post">
@@ -22,7 +22,7 @@ const Modal = (props) => {
                 </div>
             </div>
             <div className="col-md-6">
-                <button className="btn btn-primary mr-2"><i className="fa fa-comment"></i> Trò chuyện</button>
+                <button onClick={(e) => props.newChat(e, f.id)} className="btn btn-primary mr-2"><i className="fa fa-comment"></i> Trò chuyện</button>
             </div>
         </div>
     ));
