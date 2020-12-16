@@ -15,11 +15,17 @@ const RightSide = (props) => {
         setMessages(props.conversation.messages);
     }, [props.conversation.name]);
 
+    const scrollToBottom = () => {
+        const items = document.querySelectorAll(".listMessages");
+        if(items.length) items[items.length-1].scrollIntoView();
+    }
+
     useEffect(() => {
         socket.on("RECEIVED_MESSAGE", (data) => {
             messages.push(data);
-            setMessages([...messages])
+            setMessages([...messages]);
         })
+        scrollToBottom();
     }, [messages.length])
 
     useEffect(() => {
@@ -27,16 +33,13 @@ const RightSide = (props) => {
             if(typings.indexOf(typings.find(m => m.id === null)) < 0) {
                 typings.push({id: null, conversationId, type})
                 setTypings([...typings]);
+                scrollToBottom();
             }
         });
         socket.on("CLEAR_TYPING", (data) => {
             typings.splice(typings.indexOf(typings.find(t => t.id === null)));
             setTypings([...typings]);
         });
-        socket.on("RECEIVED_MESSAGE", (data) => {
-            messages.push(data);
-            setMessages([...messages])
-        })
     }, [])
 
     const handleChange = (e) => setMessage(e.target.value);
@@ -53,6 +56,7 @@ const RightSide = (props) => {
         setMessage('');
         socket.emit("SAVE_MESSAGE", request);
         input.current.focus();
+        scrollToBottom();
     }
 
     const typing = () => socket.emit("TYPING", {conversationId: props.conversation.id,
@@ -175,7 +179,7 @@ const RightSide = (props) => {
                                             <React.Fragment>
                                                 {messages.map((m, index) => (
                                                     <React.Fragment key={index}>
-                                                        <li className={`${(+props.id === +m.userId) ? 'right' : ''}`}>
+                                                        <li className={`${(+props.id === +m.userId) ? 'right' : ''} listMessages`}>
                                                             <div className="conversation-list">
                                                                 <div className="user-chat-content">
                                                                     <div className="ctext-wrap">
