@@ -18,16 +18,20 @@ const Messages = (props) => {
         name: '',
         displayName: '',
         image: '',
+        participants: [],
         messages: []
     });
 
     useEffect(() => {
         window.scrollTo(0,document.body.scrollHeight);
         getDatas(`users/${props.id}/listFriends`, setFriends);
-        getDatas(`users/${props.id}/conversations`, setConversations);
+        socket.emit("GET_CONVERSATIONS", props.id);
         socket.emit("GET_ONLINE_FRIENDS", props.id);
         socket.on("RECEIVED_ONLINE_FRIENDS", (data) => {
             setOnlineFriends([...data]);
+        });
+        socket.on("RECEIVED_CONVERSATIONS", (data) => {
+            setConversations(data);
         });
     }, []);
 
@@ -58,13 +62,12 @@ const Messages = (props) => {
             id, name: (conversationName || userDisplayName || userName),
             image: (conversationImage || userImage), type
         }
-        callApi(`conversations/${id}?type=${type}`)
-            .then(res => {
-                conversation.messages = res.data;
-                setConversation(conversation)
-            }).catch(error => {
-                console.log(error);
-            })
+        socket.emit("GET_MESSAGES", {id, type});
+        socket.on("RECEIVED_MESSAGES" , (data) => {
+            conversation.messages = data.messages;
+            conversation.participants = data.users.map(u => u.id);
+            setConversation(conversation)
+        })
     }
 
     return (

@@ -2,17 +2,17 @@ import React, {useEffect} from "react";
 import {IMAGE_URL} from "../../constants/config";
 import {getTime} from "../../utils/helpers";
 
-const LeftSide = (props) => {
+const LeftSide = ({id, conversations, eventGetConversation}) => {
 
-    // useEffect(() => {
-    //     console.log($(".conversations"))
-    // }, []);
+    useEffect(() => {
+        if(conversations.length) eventGetConversation(conversations[0].id);
+    }, [conversations.length]);
 
     const handle = (e, id) => {
         e.preventDefault();
         document.querySelectorAll(".conversations").forEach(a => a.classList.remove("active"))
         document.getElementById(`conversation${id}`).classList.add("active");
-        props.eventGetConversation(id);
+        eventGetConversation(id);
     }
 
     return (
@@ -48,11 +48,11 @@ const LeftSide = (props) => {
                             <div className="px-2">
                                 <h5 className="mb-3 px-3 font-size-16">Recent</h5>
                                 <div className="chat-message-list" data-simplebar>
-                                    <ul className="list-unstyled chat-list chat-user-list">
-                                        {(!props.conversations.length) ? (
+                                    <ul className="list-unstyled chat-list chat-user-list" id="conversations">
+                                        {(!conversations.length) ? (
                                             <h4>Chưa có cuộc trò chuyện nào</h4>
-                                        ) : props.conversations.map((c, index) => (
-                                            <li key={index} className={`conversations`} id={`conversation${c.id}`}>
+                                        ) : conversations.map((c, index) => (
+                                            <li key={index} className={`conversations ${index===0 ? 'active' : ''}`} id={`conversation${c.id}`}>
                                                 <a href=" #" onClick={(e) => handle(e, c.id)}>
                                                     <div className="media">
                                                         <div className="chat-user-img online align-self-center mr-3">
@@ -69,7 +69,7 @@ const LeftSide = (props) => {
                                                                 c.conversationName || c.userDisplayName || c.userName
                                                             }</h5>
                                                             <p className="chat-user-message text-truncate mb-0">
-                                                                {props.id === c.senderId ? 'Bạn' : c.senderName} : {c.message}
+                                                                {id === c.senderId ? 'Bạn' : c.senderName} : {c.message}
                                                             </p>
                                                         </div>
                                                         <div className="font-size-11">{getTime(c.updatedAt)}</div>
