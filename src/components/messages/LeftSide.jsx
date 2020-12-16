@@ -24,6 +24,17 @@ const LeftSide = ({id, conversations, eventGetConversation}) => {
                         <div>
                             <div className="px-4 pt-4">
                                 <h4 className="mb-4">Chats</h4>
+                                <div className="user-chat-nav float-right" style={{marginTop: '-50px'}}>
+                                    <div data-toggle="tooltip" data-placement="bottom" title=""
+                                         data-original-title="Create group">
+                                        <button type="button"
+                                                className="btn btn-link text-decoration-none text-muted font-size-18 py-0"
+                                                data-toggle="modal" data-target="#addGroup">
+                                            <i className="fa fa-pen-alt mr-1"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
                                 <div className="search-box chat-search-box">
                                     <div className="input-group mb-3 bg-light  input-group-lg rounded-lg">
                                         <div className="input-group-prepend">
@@ -69,7 +80,7 @@ const LeftSide = ({id, conversations, eventGetConversation}) => {
                                                                 c.conversationName || c.userDisplayName || c.userName
                                                             }</h5>
                                                             <p className="chat-user-message text-truncate mb-0">
-                                                                {id === c.senderId ? 'Bạn' : c.senderName} : {c.message}
+                                                                {id === c.senderId && 'Bạn :'} {c.message}
                                                             </p>
                                                         </div>
                                                         <div className="font-size-11">{getTime(c.updatedAt)}</div>
@@ -77,32 +88,6 @@ const LeftSide = ({id, conversations, eventGetConversation}) => {
                                                 </a>
                                             </li>
                                         ))}
-                                        {/*<li className="typing">*/}
-                                        {/*    <a href="#">*/}
-                                        {/*        <div className="media">*/}
-                                        {/*            <div className="chat-user-img align-self-center online mr-3">*/}
-                                        {/*                <div className="avatar-xs">*/}
-                                        {/*                    <span*/}
-                                        {/*                        className="avatar-title rounded-circle bg-soft-primary text-primary">*/}
-                                        {/*                        A*/}
-                                        {/*                    </span>*/}
-                                        {/*                </div>*/}
-                                        {/*                <span className="user-status"></span>*/}
-                                        {/*            </div>*/}
-                                        {/*            <div className="media-body overflow-hidden">*/}
-                                        {/*                <h5 className="text-truncate font-size-15 mb-1">Albert*/}
-                                        {/*                    Rodarte</h5>*/}
-                                        {/*                <p className="chat-user-message text-truncate mb-0">typing<span*/}
-                                        {/*                    className="animate-typing">*/}
-                                        {/*                    <span className="dot"></span>*/}
-                                        {/*                    <span className="dot"></span>*/}
-                                        {/*                    <span className="dot"></span>*/}
-                                        {/*                </span></p>*/}
-                                        {/*            </div>*/}
-                                        {/*            <div className="font-size-11">04:56 PM</div>*/}
-                                        {/*        </div>*/}
-                                        {/*    </a>*/}
-                                        {/*</li>*/}
                                     </ul>
                                 </div>
 

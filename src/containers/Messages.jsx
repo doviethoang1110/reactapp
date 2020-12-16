@@ -31,6 +31,7 @@ const Messages = (props) => {
             setOnlineFriends([...data]);
         });
         socket.on("RECEIVED_CONVERSATIONS", (data) => {
+            data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
             setConversations(data);
         });
     }, []);
@@ -70,12 +71,22 @@ const Messages = (props) => {
         })
     }
 
+    const createGroupChat = (data) => {
+        callApi(`conversations`, 'POST', data)
+            .then(res => {
+                const data = [...conversations, res.data].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                setConversations(data);
+            }).catch(error => {
+                console.log(error);
+        })
+    }
+
     return (
         <React.Fragment>
             <div className="layout-wrapper d-lg-flex">
                 <LeftSide conversations={conversations} id={props.id} eventGetConversation={getConversation}/>
                 <RightSide setConversationId={setConversationId} id={props.id} conversation={conversation}/>
-                <Modal newChat={newChat} friends={friends}/>
+                <Modal newChat={newChat} friends={friends} id={props.id} eventCreateGroupChat={createGroupChat}/>
             </div>
         </React.Fragment>
     );
