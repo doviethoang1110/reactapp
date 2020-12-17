@@ -6,7 +6,7 @@ import LeftSide from "../components/messages/LeftSide";
 import Modal from "../components/messages/Modal";
 import RightSide from "../components/messages/RightSide";
 import callApi from "../utils/api";
-import {getDatas} from "../utils/helpers";
+import {getDatas, sortConversations} from "../utils/helpers";
 
 const Messages = (props) => {
 
@@ -31,8 +31,7 @@ const Messages = (props) => {
             setOnlineFriends([...data]);
         });
         socket.on("RECEIVED_CONVERSATIONS", (data) => {
-            data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-            setConversations(data);
+            setConversations(sortConversations(data));
         });
     }, []);
 
@@ -74,8 +73,8 @@ const Messages = (props) => {
     const createGroupChat = (data) => {
         callApi(`conversations`, 'POST', data)
             .then(res => {
-                const data = [...conversations, res.data].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-                setConversations(data);
+                const data = [...conversations, res.data];
+                setConversations(sortConversations(data));
             }).catch(error => {
                 console.log(error);
         })
@@ -85,7 +84,9 @@ const Messages = (props) => {
         <React.Fragment>
             <div className="layout-wrapper d-lg-flex">
                 <LeftSide conversations={conversations} id={props.id} eventGetConversation={getConversation}/>
-                <RightSide setConversationId={setConversationId} id={props.id} conversation={conversation}/>
+                <RightSide name={props.name} image={props.image}
+                    setConversationId={setConversationId}
+                    id={props.id} conversation={conversation}/>
                 <Modal newChat={newChat} friends={friends} id={props.id} eventCreateGroupChat={createGroupChat}/>
             </div>
         </React.Fragment>
@@ -94,7 +95,9 @@ const Messages = (props) => {
 
 const mapStateToProps = (state) => {
     return {
-        id: state.auth.user.id
+        id: state.auth.user.id,
+        name: state.auth.user.userDetail.displayName || state.auth.user.name,
+        image: state.auth.user.userDetail.image
     };
 };
 

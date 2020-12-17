@@ -51,11 +51,12 @@ const Modal = (props) => {
             return;
         }
         document.getElementById("error_name").innerText = "";
-        if(conversation.participants.length < 3) {
+        if(conversation.participants.length < 2) {
             document.getElementById("error_participant").innerText = "Nhóm tối thiểu 3 người";
             return;
         }
         document.getElementById("error_participant").innerText = "";
+        conversation.participants.push(props.id);
         props.eventCreateGroupChat(conversation);
         setParticipants([]);
     }

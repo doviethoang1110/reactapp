@@ -29,15 +29,15 @@ const RightSide = (props) => {
     }, [messages.length])
 
     useEffect(() => {
-        socket.on("TYPING_MESSAGE", ({conversationId, type}) => {
-            if(typings.indexOf(typings.find(m => m.id === null)) < 0) {
-                typings.push({id: null, conversationId, type})
+        socket.on("TYPING_MESSAGE", ({conversationId, name, image, type}) => {
+            if(typings.indexOf(typings.find(m => m.name === name)) < 0) {
+                typings.push({name, image, conversationId, type})
                 setTypings([...typings]);
                 scrollToBottom();
             }
         });
-        socket.on("CLEAR_TYPING", (data) => {
-            typings.splice(typings.indexOf(typings.find(t => t.id === null)));
+        socket.on("CLEAR_TYPING", (name) => {
+            typings.splice(typings.indexOf(typings.find(t => t.name === name)));
             setTypings([...typings]);
         });
     }, [])
@@ -59,11 +59,17 @@ const RightSide = (props) => {
         scrollToBottom();
     }
 
-    const typing = () => socket.emit("TYPING", {conversationId: props.conversation.id,
-            participants: props.conversation.participants,
-            type: props.conversation.type});
+    const typing = () => {
+        let data;
+        if(props.conversation.type === 'group')
+            data = {conversationId: props.conversation.id, name: props.name, image: props.image, type: props.conversation.type,
+                participants: props.conversation.participants}
+        else data = {conversationId: props.conversation.id, type: props.conversation.type,
+            participants: props.conversation.participants}
+        socket.emit("TYPING", data);
+    }
 
-    const clearTyping =() => socket.emit("CLEAR_TYPING", {conversationId: props.conversation.id,
+    const clearTyping =() => socket.emit("CLEAR_TYPING", {conversationId: props.conversation.id, name: props.name,
         participants: props.conversation.participants});
 
     const keyDown = (e) => {
@@ -220,7 +226,10 @@ const RightSide = (props) => {
                                                     <div className="conversation-list">
                                                         {(m.type === 'group') && (
                                                             <div className="chat-avatar">
-                                                                <img src="assets/images/users/avatar-4.jpg" alt=""/>
+                                                                <img src={
+                                                                    m.image ? IMAGE_URL+m.image
+                                                                    : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
+                                                                } alt=""/>
                                                             </div>
                                                         )}
                                                         <div className="user-chat-content">
@@ -237,7 +246,7 @@ const RightSide = (props) => {
                                                                 </div>
                                                             </div>
                                                             {(m.type === 'group') && (
-                                                                <div className="conversation-name">Doris Brown</div>
+                                                                <div className="conversation-name">{m.name}</div>
                                                             )}
                                                         </div>
                                                     </div>
