@@ -6,7 +6,7 @@ import LeftSide from "../components/messages/LeftSide";
 import Modal from "../components/messages/Modal";
 import RightSide from "../components/messages/RightSide";
 import callApi from "../utils/api";
-import {getDatas, sortConversations} from "../utils/helpers";
+import {getDatas, sortConversations, sortMessages} from "../utils/helpers";
 
 const Messages = (props) => {
 
@@ -19,7 +19,8 @@ const Messages = (props) => {
         displayName: '',
         image: '',
         participants: [],
-        messages: []
+        messages: [],
+        totalPages: null
     });
 
     useEffect(() => {
@@ -51,7 +52,6 @@ const Messages = (props) => {
 
     const setConversationId = ({conId, updatedAt}) => {
         const data = {...conversation, id:conId};
-        console.log(data);
         setConversation(data);
     }
 
@@ -62,10 +62,11 @@ const Messages = (props) => {
             id, name: (conversationName || userDisplayName || userName),
             image: (conversationImage || userImage), type
         }
-        socket.emit("GET_MESSAGES", {id, type});
-        socket.on("RECEIVED_MESSAGES" , (data) => {
-            conversation.messages = data.messages;
-            conversation.participants = data.users.map(u => u.id);
+        socket.emit("GET_MESSAGES", {id, type, page: 0});
+        socket.on("RECEIVED_MESSAGES" , ({messages, participants, totalPages}) => {
+            conversation.messages = sortMessages(messages);
+            conversation.participants = participants.users.map(u => u.id);
+            conversation.totalPages = totalPages;
             setConversation(conversation)
         })
     }
@@ -80,12 +81,25 @@ const Messages = (props) => {
         })
     }
 
+    const updateConversation = ({message, senderDisplayName, updatedAt, conversationId}) => {
+        setTimeout(() => {
+            const index = conversations.indexOf(conversations.find(c => c.id === conversationId));
+            if(index > -1) {
+                conversations[index].message = message;
+                conversations[index].senderDisplayName = senderDisplayName;
+                conversations[index].updatedAt = updatedAt;
+            }
+            setConversations(sortConversations([...conversations]))
+        },0)
+    }
+
     return (
         <React.Fragment>
             <div className="layout-wrapper d-lg-flex">
                 <LeftSide conversations={conversations} id={props.id} eventGetConversation={getConversation}/>
                 <RightSide name={props.name} image={props.image}
-                    setConversationId={setConversationId}
+                    setConversationId={setConversationId} friends={friends}
+                           eventUpdateConversation={updateConversation}
                     id={props.id} conversation={conversation}/>
                 <Modal newChat={newChat} friends={friends} id={props.id} eventCreateGroupChat={createGroupChat}/>
             </div>

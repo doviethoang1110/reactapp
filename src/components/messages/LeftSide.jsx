@@ -80,7 +80,15 @@ const LeftSide = ({id, conversations, eventGetConversation}) => {
                                                                 c.conversationName || c.userDisplayName || c.userName
                                                             }</h5>
                                                             <p className="chat-user-message text-truncate mb-0">
-                                                                {id === c.senderId && 'Bạn :'} {c.message}
+                                                                {c.type === 'group' ? (
+                                                                    <React.Fragment>
+                                                                        {id === c.senderId ? 'Bạn :' : `${c.senderDisplayName || c.senderName} :`} {c.message}
+                                                                    </React.Fragment>
+                                                                ) : (
+                                                                    <React.Fragment>
+                                                                        {id === c.senderId && 'Bạn :'} {c.message}
+                                                                    </React.Fragment>
+                                                                )}
                                                             </p>
                                                         </div>
                                                         <div className="font-size-11">{getTime(c.updatedAt)}</div>

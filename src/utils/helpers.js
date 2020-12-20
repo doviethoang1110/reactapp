@@ -127,3 +127,5 @@ export const getTime = (date) => moment(date).format("MMM-DD hh:mm A");
 export const getTimeMessage = (date) => moment(date).format("hh:mm A");
 
 export const sortConversations = (array) => array.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+export const sortMessages = (array) => array.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));

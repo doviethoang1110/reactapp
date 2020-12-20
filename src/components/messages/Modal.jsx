@@ -114,7 +114,7 @@ const Modal = (props) => {
                                                     className="btn btn-danger avatar-sm rounded-circle"
                                                     data-dismiss="modal">
                                                 <span className="avatar-title bg-transparent font-size-20">
-                                                    <i className="ri-close-fill"></i>
+                                                    <i className="fa fa-door-closed"></i>
                                                 </span>
                                             </button>
                                         </li>
@@ -122,7 +122,7 @@ const Modal = (props) => {
                                             <button type="button"
                                                     className="btn btn-success avatar-sm rounded-circle">
                                                 <span className="avatar-title bg-transparent font-size-20">
-                                                    <i className="ri-phone-fill"></i>
+                                                    <i className="fa fa-phone"></i>
                                                 </span>
                                             </button>
                                         </li>
@@ -153,7 +153,7 @@ const Modal = (props) => {
                                                     className="btn btn-danger avatar-sm rounded-circle"
                                                     data-dismiss="modal">
                                                 <span className="avatar-title bg-transparent font-size-20">
-                                                    <i className="ri-close-fill"></i>
+                                                    <i className="fa fa-door-closed"></i>
                                                 </span>
                                             </button>
                                         </li>
@@ -161,7 +161,7 @@ const Modal = (props) => {
                                             <button type="button"
                                                     className="btn btn-success avatar-sm rounded-circle">
                                                 <span className="avatar-title bg-transparent font-size-20">
-                                                    <i className="ri-vidicon-fill"></i>
+                                                    <i className="fa fa-video"></i>
                                                 </span>
                                             </button>
                                         </li>

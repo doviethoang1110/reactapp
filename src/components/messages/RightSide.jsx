@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {IMAGE_URL} from "../../constants/config";
 import socket from "../../utils/socket";
-import {getTimeMessage} from "../../utils/helpers";
+import {getTimeMessage, sortMessages} from "../../utils/helpers";
 import "../../components/RightSide.css";
 
 const RightSide = (props) => {
@@ -10,9 +10,14 @@ const RightSide = (props) => {
     const [message, setMessage] = useState('');
     const [typings, setTypings] = useState([]);
     const input = useRef();
+    const loader = useRef(null);
+    const block = useRef(null);
+    const [page, setPage] = useState(0);
 
     useEffect(() => {
         setMessages(props.conversation.messages);
+        setPage(0);
+        scrollToBottom();
     }, [props.conversation.name]);
 
     const scrollToBottom = () => {
@@ -20,13 +25,44 @@ const RightSide = (props) => {
         if(items.length) items[items.length-1].scrollIntoView();
     }
 
+    const scroll = (e) => {
+        if(+page < +props.conversation.totalPages) {
+            if(e.target.scrollTop < 80) {
+                loader.current.style.display = 'block';
+                block.current.style.display = 'block';
+                const number = +page + 1;
+                setPage(number);
+                socket.emit("LOADMORE_MESSAGES", {id: props.conversation.id, type: props.conversation.type, page: number});
+                socket.on("RECEIVED_LOADMORE_MESSAGES" , (datas) => {
+                    loader.current.style.display = 'none';
+                    block.current.style.display = 'none';
+                    if(!datas.length) return;
+                    else setMessages(sortMessages([...messages, ...datas]))
+                })
+            }
+        }else return;
+    }
+
+
     useEffect(() => {
         socket.on("RECEIVED_MESSAGE", (data) => {
             messages.push(data);
-            setMessages([...messages]);
+            props.eventUpdateConversation(
+                {message: data.message,
+                    updatedAt: data.updatedAt,
+                    conversationId: data.conversationId, senderDisplayName: data.name
+                })
+            setMessages(sortMessages([...messages]));
+            scrollToBottom();
         })
-        scrollToBottom();
-    }, [messages.length])
+    }, [messages.length]);
+
+    useEffect(() => {
+        const ele = document.getElementById("block")
+        if(ele) ele.scrollIntoView()
+        console.log('ok')
+    },[document.getElementById("block")]);
+
 
     useEffect(() => {
         socket.on("TYPING_MESSAGE", ({conversationId, name, image, type}) => {
@@ -46,9 +82,14 @@ const RightSide = (props) => {
 
     const handleRequest = (message) => {
         let request;
-        if(props.conversation.id)
-            request = {message, userId: props.id, participants: props.conversation.participants, conversationId: props.conversation.id};
-        else
+        if(props.conversation.id) {
+            request = {message, userId: props.id, type: props.conversation.type,
+                participants: props.conversation.participants, conversationId: props.conversation.id};
+            if(props.conversation.type === 'group') {
+                request.name = props.name;
+                request.image = props.image;
+            }
+        } else
             request = {message, userId: props.id,
                 creatorId:props.id, conversationId: props.conversation.id,
                 participants: [props.id,props.conversation.userId]
@@ -117,34 +158,17 @@ const RightSide = (props) => {
                                         </div>
                                         <div className="col-sm-8 col-4">
                                             <ul className="list-inline user-chat-nav text-right mb-0">
-
-                                                <li className="list-inline-item">
-                                                    <div className="dropdown">
-                                                        <button className="btn nav-btn dropdown-toggle" type="button"
-                                                                data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
-                                                            <i className="ri-search-line"></i>
-                                                        </button>
-                                                        <div className="dropdown-menu p-0 dropdown-menu-right dropdown-menu-md">
-                                                            <div className="search-box p-2">
-                                                                <input type="text" className="form-control bg-light border-0"
-                                                                       placeholder="Search.."/>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-
                                                 <li className="list-inline-item d-none d-lg-inline-block">
                                                     <button type="button" className="btn nav-btn" data-toggle="modal"
                                                             data-target="#audiocallModal">
-                                                        <i className="ri-phone-line"></i>
+                                                        <i className="fa fa-phone"></i>
                                                     </button>
                                                 </li>
 
                                                 <li className="list-inline-item d-none d-lg-inline-block">
                                                     <button type="button" className="btn nav-btn" data-toggle="modal"
                                                             data-target="#videocallModal">
-                                                        <i className="ri-vidicon-line"></i>
+                                                        <i className="fa fa-video"></i>
                                                     </button>
                                                 </li>
                                                 <li className="list-inline-item">
@@ -163,6 +187,12 @@ const RightSide = (props) => {
                                                                 className="ri-phone-line float-right text-muted"></i></a>
                                                             <a className="dropdown-item d-block d-lg-none" href=" #">Video <i
                                                                 className="ri-vidicon-line float-right text-muted"></i></a>
+                                                            {props.conversation.type === 'group' && (
+                                                                <a className="dropdown-item"
+                                                                   data-toggle="modal" data-target="#members"
+                                                                   href=" #">Members <i
+                                                                    className="fa fa-user float-right text-muted"></i></a>
+                                                            )}
                                                             <a className="dropdown-item" href=" #">Archive <i
                                                                 className="ri-archive-line float-right text-muted"></i></a>
                                                             <a className="dropdown-item" href=" #">Muted <i
@@ -179,7 +209,9 @@ const RightSide = (props) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="chat-conversation p-3 p-lg-4" data-simplebar="init">
+                                <div onScroll={scroll} className="chat-conversation p-3 p-lg-4" data-simplebar="init">
+                                    <div ref={loader} className="loader"></div>
+                                    <div ref={block} style={{height: '80px'}}></div>
                                     <ul className="list-unstyled mb-0">
                                         {messages.length > 0 && (
                                             <React.Fragment>
@@ -187,6 +219,15 @@ const RightSide = (props) => {
                                                     <React.Fragment key={index}>
                                                         <li className={`${(+props.id === +m.userId) ? 'right' : ''} listMessages`}>
                                                             <div className="conversation-list">
+                                                                {props.conversation.type === 'group' && props.id !== m.userId && (
+                                                                    <div className="chat-avatar">
+                                                                        <img src={
+                                                                            m?.user?.userDetail.image || m?.image
+                                                                            ? IMAGE_URL+(m?.user?.userDetail.image || m?.image)
+                                                                                : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
+                                                                        } alt=" "/>
+                                                                    </div>
+                                                                )}
                                                                 <div className="user-chat-content">
                                                                     <div className="ctext-wrap">
                                                                         <div className="ctext-wrap-content">
@@ -213,6 +254,9 @@ const RightSide = (props) => {
                                                                             </div>
                                                                         </div>
                                                                     </div>
+                                                                    {props.conversation.type === 'group' && props.id !== m.userId && (
+                                                                        <div className="conversation-name">{m?.user?.userDetail.displayName || m?.user?.name || m?.name}</div>
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -254,6 +298,7 @@ const RightSide = (props) => {
                                             )
                                         )}
                                     </ul>
+                                    <div id="block"></div>
                                 </div>
                                 <div className="chat-input-section p-3 p-lg-4">
                                     <div className="row no-gutters">
@@ -302,6 +347,34 @@ const RightSide = (props) => {
                                         data-target="#listOnline" className="btn btn-primary">Bạn bè</button>
                             </div>
                         )}
+                    </div>
+                </div>
+            </div>
+            <div className="modal fade" id="members" tabIndex="-1" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                        <div className="modal-body">
+                            <div className="text-center p-4" style={{height: '300px', overflowY: 'auto'}}>
+                                {props.friends.filter(f => props.conversation.participants.includes(f.id)).map((f, index) => (
+                                    <div className="row mb-3" key={index}>
+                                        <div className="col-md-6">
+                                            <div className="post">
+                                                <div className="media">
+                                                    <div className={`chat-user-img align-self-center mr-3`}>
+                                                        <img className="rounded-circle avatar-xs" src={
+                                                            f.image ? IMAGE_URL+f.image : 'https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg'
+                                                        } alt=""/>
+                                                    </div>
+                                                    <div className="media-body overflow-hidden">
+                                                        <span className="username">{f.displayName || f.name}</span><br/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
