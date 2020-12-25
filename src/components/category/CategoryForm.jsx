@@ -50,10 +50,10 @@ class CategoryForm extends Component {
                     toast('success',response.message)
                 })
                 .catch(error => {
-                    store.dispatch(actionToggleLoading(false));
-                    console.log(error)
-                    if(error.response.status !== 403) for(let e in error) document.getElementById('err_'+e).innerText = error[e];
+                    const data = error.response.data;
+                    if(error.response.status !== 403) for(let e in data) document.getElementById('err_'+e).innerText = data[e];
                     toastRoles(error)
+                    store.dispatch(actionToggleLoading(false));
                 });
         } else {
             this.forceUpdate();

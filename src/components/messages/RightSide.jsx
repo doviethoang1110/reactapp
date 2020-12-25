@@ -60,7 +60,6 @@ const RightSide = (props) => {
     useEffect(() => {
         const ele = document.getElementById("block")
         if(ele) ele.scrollIntoView()
-        console.log('ok')
     },[document.getElementById("block")]);
 
 

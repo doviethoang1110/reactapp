@@ -13,6 +13,22 @@ import Profile from "./Profile";
 import {getDatas} from "../utils/helpers";
 
 const Main = (props) => {
+
+    const PrivateRoute = ({ component: Component, roles, ...rest }) => {
+        return (
+            <Route {...rest} render={props => {
+                let currentUser;
+                if (!currentUser) {
+                    return <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
+                }
+                if (roles && roles.indexOf(currentUser.role) === -1) {
+                    return <Redirect to={{ pathname: '/'}} />
+                }
+                return <Component {...props} />
+            }} />
+        );
+    }
+
     const renderContent = (routes) => {
         let content = null;
         if(routes.length > 0) {
